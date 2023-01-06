@@ -1,1 +1,6 @@
-module.exports = {extends: ['@commitlint/config-conventional']}
+const Configuration = {
+  extends: ['@commitlint/config-conventional'],
+  ignores: [(commit) => commit.includes('WIP')],
+};
+
+module.exports = Configuration;
