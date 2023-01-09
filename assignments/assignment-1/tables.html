@@ -1,7 +1,68 @@
+<!DOCTYPE html>
 <!--
 `tables.html` that contains a table that
   - has a heading row and body
   - contains at least 5 rows and 3 columns
   - have some cells merged (using rowspan and/or colspan)
 -->
-
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>tables.html</title>
+</head>
+<body>
+  <table border="1">
+    <thead>
+      <tr>
+        <td
+            colspan="2"
+            rowspan="2"
+            style="text-align: center">
+          table
+        </td>
+        <th colspan="3">columns</th>
+      </tr>
+      <tr>
+        <th>col 1</th>
+        <th>col 2</th>
+        <th>col 3</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th rowspan="0">rows</th>
+      </tr>
+      <tr>
+        <th>row 1</th>
+        <td>11</td>
+        <td>12</td>
+        <td>13</td>
+      </tr>
+      <tr>
+        <th>row 2</th>
+        <td>21</td>
+        <td>22</td>
+        <td>23</td>
+      </tr>
+      <tr>
+        <th>row 3</th>
+        <td>31</td>
+        <td>32</td>
+        <td>33</td>
+      </tr>
+      <tr>
+        <th>row 4</th>
+        <td>41</td>
+        <td>42</td>
+        <td>43</td>
+      </tr>
+      <tr>
+        <th>row 5</th>
+        <td>51</td>
+        <td>52</td>
+        <td>53</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

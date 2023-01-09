@@ -1,6 +1,50 @@
+<!DOCTYPE html>
 <!--
 `lists.html` that
   - includes both ordered and unordered lists
   - has nested lits, in total at least 3 levels of indentation
 -->
-
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>lists.html</title>
+</head>
+<body>
+  <ol>
+    <h3>(root) ordered list</h3>
+    <li>first list item</li>
+    <li>second list item</li>
+    <li>third list item</li>
+    <ul>
+      <h4>(nested) unordered list</h4>
+      <li>first list item</li>
+      <li>second list item</li>
+      <li>third list item</li>
+      <ol>
+        <h5>(nested, nested) ordered list</h5>
+        <li>first list item</li>
+        <li>second list item</li>
+        <li>third list item</li>
+      </ol>
+      <ol>
+        <h5>(nested, nested) ordered list</h5>
+        <li>first list item</li>
+        <li>second list item</li>
+        <li>third list item</li>
+      </ol>
+    </ul>
+    <ul>
+      <h4>(nested) unordered list</h4>
+      <li>first list item</li>
+      <li>second list item</li>
+      <li>third list item</li>
+      <ul>
+        <h5>(nested, nested) unordered list</h5>
+        <li>first list item</li>
+        <li>second list item</li>
+        <li>third list item</li>
+      </ul>
+    </ul>
+  </ol>
+</body>
+</html>
