@@ -1,4 +1,8 @@
-Ignore this README.md if you are grading my assignments (See ./assignments/).
+"assignment-1" and "assignment-2" have been moved from ./assignments/ to ./
+
+https://github.com/dat310-2023/wathne-labs/commits/main
+
+Ignore the rest of this README.md if you are grading my assignments.
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
