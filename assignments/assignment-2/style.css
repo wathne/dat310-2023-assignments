@@ -1,0 +1,149 @@
+/* Imports */
+@import url(http://fonts.googleapis.com/css?family=Verdana);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+@import url(http://fonts.googleapis.com/css?family=Garamond);
+
+/* General */
+body {
+  /* Unless otherwise stated, all fonts are Verdana, with sans-serif as a second
+   * option. */
+  font-family: 'Verdana', sans-serif;
+  /* The backgrounds of the header and footer extend to the borders of the
+   * browser window. */
+  margin: 0px 0px 0px 0px;
+}
+
+/* TODO(ass-2): Is there a better way to do this? */
+h1,
+h2,
+h3,
+p,
+ul,
+li {
+  /* All text is 10px from the left and right sides of the browser window. */
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+h2,
+h3 {
+  /* Unless otherwise stated, all second and third-level headings are in Open
+   * Sans, with sans-serif as a second option. */
+  font-family: 'Open Sans', sans-serif;
+}
+
+a {
+  /* The links are not underlined, only on mouseover. */
+  text-decoration: none;
+}
+
+a:hover {
+  /* The links are not underlined, only on mouseover. */
+  text-decoration: underline;
+}
+
+/* Header */
+#header {
+  /* Background color is royalblue. */
+  background-color: royalblue;
+  /* The entire header section (div) has 5px wide outset border in lightblue. */
+  border-style: outset;
+  border-color: lightblue;
+  border-width: 5px 5px 5px 5px;
+}
+
+#header h1,
+#header h2 {
+  /* Headings are in white and have a shadow colored #333. */
+  color: white;
+  text-shadow: 2px 2px 4px #333
+}
+
+#header > h1 {
+  /* There is no vertical space between the first and second headings. */
+  margin-bottom: 0px;
+}
+
+#header > h2 {
+  /* The second header has a size of 1.2em, is written using the font Garamond,
+   * with serif as a second option, and is in italic. */
+  font-family: 'Garamond', serif;
+  font-size: 1.2em;
+  font-style: italic;
+  /* There is no vertical space between the first and second headings. */
+  margin-top: 0px;
+}
+
+/* Content */
+#content h2 {
+  /* The second-level headings (h2) have a solid 1px bottom border in #999999.
+   */
+  border-style: solid;
+  border-color: #999999;
+  border-width: 0px 0px 1px 0px;
+}
+
+#content .place .rank {
+  /* The rank labels (#1, #2, #3) are written in white on a black background. */
+  background-color: black;
+  color: white;
+}
+
+#content .place > p {
+  /* The paragraph text is in #999999, except the first lines which are colored
+   * black. */
+  color: #999999;
+  /* The paragraph text is justified and indented by 2em. */
+  text-align: justify;
+  text-indent: 2em;
+}
+
+#content .place > p::first-line {
+  /* The paragraph text is in #999999, except the first lines which are colored
+   * black. */
+  color: black;
+}
+
+#content a {
+  /* Links are blue. */
+  color: blue;
+}
+
+/* Footer */
+#footer {
+  /* The footer has a black background. */
+  background-color: black;
+}
+
+#footer #calendar > h2,
+#footer #calendar > ul,
+#footer #calendar > ul a {
+  /* The heading and list items are white. */
+  color: white;
+}
+
+#footer #calendar > ul {
+  /* The first two list items have a disc symbol, the rest have a circle symbol.
+   */
+  list-style-type: circle;
+}
+
+#footer #calendar > ul > li:nth-child(1),
+#footer #calendar > ul > li:nth-child(2) {
+  /* The first two list items have a disc symbol, the rest have a circle symbol.
+   */
+  list-style-type: disc;
+}
+
+#footer #calendar > ul > li:nth-child(2) {
+  /* The second list item (February) is bold. */
+  font-weight: bold;
+}
+
+#footer > p {
+  /* The copyright paragraph is center aligned, yellow, and in oblique. */
+  color: yellow;
+  font-style: oblique;
+  text-align: center;
+}
+
