@@ -158,10 +158,7 @@ Merk at i du *bare lager en "mockup"*. Innholdet trenger ikke å være dynamisk.
     -	Innrammede bokser (class `framed`) har en solid 1px border og 5px padding. Font størrelse 0.8em.
 
   *	**Footer**
-    -	Footeren skal alltid være på bunnen av siden. Optional kan den være sticky (se optional 2)., men den skal kunne "blas vekk" (dersom siden er for lang må brukeren bla ned for å kunne se den).
-        - Hovedideen er å sette `height:100%` på `<html>` og `min-height: 100%` på `<body>` elementet.
-        - Deretter bruk absolutt posisjonering på footeren, eller bruk en flexbox.
-        -	Eller se, for et eksempel: https://css-tricks.com/snippets/css/sticky-footer/
+    -	Footeren skal alltid være på bunnen av siden. Optional kan den være sticky (se optional 2).
     -	Høyden skal være på 120px. Den skal ha en 5px bred topp border.
     -	Footeren skal inneholde kontaktinformasjon (telefon, e-post). Disse er sentrert både vertikalt og horisontalt.
 
