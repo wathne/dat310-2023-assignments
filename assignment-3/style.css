@@ -1,0 +1,275 @@
+/* Palette */
+/* TODO: Palette. */
+/* You need to select a color palette with maximum five colors, and use only
+ * those colors (plus white for page background). */
+/* Provide in the `README.md` file a list the hex codes of the colors from that
+ * palette. Create a color palette yourself: (Paletton)[https://paletton.com/].
+ */
+
+
+/* TODO: Temporary palette. */
+/* http://colormind.io/ */
+/*
+FFFFFF Light shades
+8DBBB5 Light accent
+00AD43 Main brand color
+A25A55 Dark accent
+393233 Dark shades
+*/
+
+
+/* Imports */
+/* https://fonts.google.com/icons?icon.set=Material+Symbols */
+@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,700,1,-25);
+/* https://fonts.google.com/specimen/Montserrat */
+@import url(https://fonts.googleapis.com/css2?family=Montserrat);
+/* https://fonts.google.com/specimen/Raleway */
+@import url(https://fonts.googleapis.com/css2?family=Raleway);
+
+
+/* General */
+body {
+  /* Sans-serif font family. */
+  /* All headings are typeset Montserrat, all other text is typeset Raleway. */
+  /* Font sizes are controlled by the browser; all font sizes need to be set
+   * relative, using *em*. */
+  font-family: 'Raleway', sans-serif;
+
+  /* Background color is white. */
+  background-color: #ffffff;
+  margin: 0px 0px 0px 0px;
+  min-height: 100vh;
+  padding: 0px 0px 0px 0px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  /* Sans-serif font family. */
+  /* All headings are typeset Montserrat, all other text is typeset Raleway. */
+  /* Font sizes are controlled by the browser; all font sizes need to be set
+   * relative, using *em*. */
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+/* TODO: Move flexbox stuff to General/Header/Main/Footer. */
+.flex-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-header {
+}
+
+.flex-main-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.flex-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+}
+
+.flex-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.flex-aside {
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  align-items: left;
+}
+
+.flex-products {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.flex-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Header */
+header {
+  /* Height is 40px. The header is always visible, even when the page is
+   * scrolled down. */
+  height: 40px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+
+  /* It has a background color from the palette. */
+  /* TODO: Palette. */
+  background-color: #393233;
+}
+
+header #header-logo {
+  /* The logo area has a height of 60px. It is positioned 5% from the left of
+   * the containing element. */
+  /* You can write the name of your site here and/or create a logo.
+   * [Openverse](https://wordpress.org/openverse/) */
+  height: 60px;
+  padding: 0px 10px 0px 10px;
+  position: absolute;
+  left: 5%;
+
+  /* The logo needs to overlay any content (i.e., needs to have the highest
+   * z-index). */
+  z-index: 2147483647;
+
+  /* TODO: Palette. */
+  background-color: #00AD43;
+}
+
+header #header-menu {
+  /* The main menu is part of the header and is horizontally aligned. */
+  /* It has to be an unordered list inside a `<nav>` element. */
+  /* It is right aligned and 5% from the right side of the page. */
+  /* It contains 3 links, pointing to index.html, product.html and cart.html. */
+  /* Every link is represented by an icon. */
+  position: fixed;
+  right: 5%;
+  top: -5px;
+}
+
+header #header-menu ul {
+  /* Ditto. */
+  display: flex;
+  list-style: none;
+}
+
+header #header-menu ul a {
+  /* Ditto. */
+  color: #ffffff;
+  text-decoration: none;
+}
+
+
+/* Main */
+main {
+  /* There has to be 100px vertical space (margin or padding) on top of the main
+   * area. */
+  margin-top: 100px;
+
+  /* The main area is 90% of the width of the page and is center-aligned. That
+   * means it resizes automatically when the window is resized, but has a
+   * maximum width of 1400px (see the screenshots under `samples/`). */
+  width: 90%;
+  max-width: 1400px;
+}
+
+main h1 {
+  /* Main headers (h1) inside `<main>` have a background color, 1.2em font size,
+   * and 5px padding around (see Product Page). */
+  /* TODO: Palette. */
+  background-color: blue;
+  font-size: 1.2em;
+  padding: 5px 5px 5px 5px;
+}
+
+main .framed {
+  /* Framed boxes (class `.framed`) have a solid 1px border and 5px padding. The
+   * font-size is 0.8em. */
+  border-style: solid;
+  /* TODO: Palette. */
+  border-color: #000000;
+  border-width: 1px 1px 1px 1px;
+  font-size: 0.8em;
+}
+
+main .flex-content {
+  margin: 0px 5px 5px 0px;
+}
+
+main #content-banner {
+  border-style: solid;
+  /* TODO: Palette. */
+  border-color: #000000;
+  border-width: 5px 0px 5px 0px;
+  font-size: 0.8em;
+
+  /* TODO: Palette. */
+  background-color: pink;
+
+  margin: 0px 0px 5px 0px;
+}
+
+main .flex-products {
+}
+
+main article {
+  width: 280px;
+  margin: 2px 2px 2px 2px;
+  flex: 1 1 280px;
+  /* TODO: Palette. */
+  background-color: grey;
+}
+
+main article .img-container {
+  border-style: solid;
+  /* TODO: Palette. */
+  border-color: #000000;
+  border-width: 2px 2px 2px 2px;
+}
+
+main article img {
+  display: block;
+  width: 100%;
+}
+
+main aside {
+  padding: 5px 5px 5px 5px;
+  margin: 0px 0px 5px 0px;
+  /* TODO: Palette. */
+  background-color: #8DBBB5;
+  min-width: 300px;
+  max-width: 300px;
+}
+
+/* Footer */
+footer {
+  /* The footer always stays at the bottom of the page. For extra points, the
+   * footer can be "sticky": See Optional 2. */
+
+  /* The height of the footer is 120px. It has a 5px wide top border. */
+  border-style: solid;
+  /* TODO: Palette. */
+  border-color: #000000;
+  border-width: 5px 0px 0px 0px;
+  height: 120px;
+
+  /* The footer contains contact information (tel, email). These are
+   * center-aligned both vertically and horizontally. */
+
+  /* TODO: Palette. */
+  background-color: #393233;
+
+  color: white;
+}
+
+footer a {
+  color: white;
+}
+
+footer #footer-info {
+}
+
