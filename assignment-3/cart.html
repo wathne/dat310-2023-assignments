@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>cart</title>
+  <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<body class="flex-body">
+
+<header class="flex-header">
+  <div id=header-logo>
+    <h5>logo</h5>
+  </div>
+  <nav id=header-menu>
+    <ul>
+      <li>
+        <a href="./index.html">
+          <span class="material-symbols-sharp">home</span>
+        </a>
+      </li>
+      <li>
+        <a href="./product.html">
+          <span class="material-symbols-sharp">percent</span>
+        </a>
+      </li>
+      <li>
+        <a href="./cart.html">
+          <span class="material-symbols-sharp">shopping_cart</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<div class="flex-main-container">
+  <main class="flex-main">
+    <div class="flex-content">
+
+      <h1>Cart</h1>
+      <div class="framed">
+        <table>
+          <tr>
+            <th>Product</th>
+            <th>Count</th>
+            <th>Item price</th>
+            <th>Discount</th>
+            <th>Price</th>
+            <th>Cancel</th>
+          </tr>
+          <tr>
+            <td>1 apple</td>
+            <td>5</td>
+            <td>6</td>
+            <td></td>
+            <td>30</td>
+            <td><span class="material-symbols-sharp">cancel</span></td>
+          </tr>
+          <tr>
+            <td>100 apples</td>
+            <td>1</td>
+            <td>300</td>
+            <td>50%</td>
+            <td>300</td>
+            <td><span class="material-symbols-sharp">cancel</span></td>
+          </tr>
+        </table>
+      </div>
+
+      <h1>Checkout</h1>
+      <div class="framed">
+        <form>
+          <label for="first-name">First name</label><br>
+          <input type="text" id="first-name" name="first-name"><br>
+
+          <label for="last-name">Last name</label><br>
+          <input type="text" id="last-name" name="last-name"><br>
+
+          <label for="email">Email</label><br>
+          <input type="text" id="email" name="email"><br>
+
+          <label for="street">Street</label><br>
+          <input type="text" id="street" name="street"><br>
+
+          <label for="city">City</label><br>
+          <input type="text" id="city" name="city"><br>
+
+          <label for="postal-code">Postal code</label><br>
+          <input type="text" id="postal-code" name="postal-code"><br>
+
+          <input type="checkbox" id="tos" name="tos"><br>
+          <label for="tos">I agree to the general terms of service.</label>
+
+          <p>SUBMIT</p>
+        </form>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<footer class="flex-footer">
+  <div id=footer-info>
+    <h5>
+      Customer service: |
+      +47 321 09 87654 |
+      <a href="mailto:contact@noreply.com">contact@noreply.com</a>
+    </h5>
+  </div>
+</footer>
+
+</body>
+</html>
