@@ -231,6 +231,11 @@ main article .img-container {
   border-width: 2px 2px 2px 2px;
 }
 
+main article a:hover .img-container{
+  /* TODO: Palette. */
+  border-color: #00AD43;
+}
+
 main article img {
   display: block;
   width: 100%;
