@@ -23,16 +23,46 @@ const filterSortOrderElement = document.getElementById("filter-sort-order");
 const filterCriteriaElement = document.getElementById("filter-criteria");
 
 
-// TODO: formValidation(formData)
 function formValidation(formData) {
   const dataObject = Object.fromEntries(formData);
   const name_ = dataObject["name"];
   const telephone = dataObject["telephone"];
   const email = dataObject["email"];
-  if (true) {
-    return true;
+
+  // "The name field must never be empty"
+  if (name_ === "") {
+    return false;
   }
-  return false;
+
+  // "Tel may contain only numbers and + - ( ) and space"
+  const telephoneFilter = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+                           "+", "-", "(", ")", " "]
+  for (const a of telephone) {
+    let match = false;
+    for (const b of telephoneFilter) {
+      if (a.includes(b)) {
+        match = true;
+      }
+    }
+    if (!match) {
+      return false;
+    }
+  }
+
+  // "Email has to be a valid email"
+  // Source: https://www.abstractapi.com/tools/email-regex-guide
+  const emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  if (!email.match(emailRegex)) {
+    return false;
+  }
+
+  // "Either tel or email has to be filled in"
+  // !(telephone || email) <=> (!telephone && !email)
+  if (telephone === "" && email == "") {
+    return false;
+  }
+
+  return true;
 }
 
 
@@ -245,8 +275,8 @@ class AddEntryHandler {
           this.parent.addEntry(formData);
           this.div.style.display = "none";
         } else {
-          // TODO: Invalid form.
-          console.log("TODO: Invalid form.");
+          // TODO: Message about invalid formData.
+          console.log("TODO: Message about invalid formData.");
         }
       }
     }
@@ -322,8 +352,8 @@ class ModifyEntryHandler {
           this.owner = null;
           this.div.style.display = "none";
         } else {
-          // TODO: Invalid form.
-          console.log("TODO: Invalid form.");
+          // TODO: Message about invalid formData.
+          console.log("TODO: Message about invalid formData.");
         }
       }
     }
@@ -466,7 +496,10 @@ class SettingsHandler {
   handleEvent(event) {
     if (event.target === this.form) {
       if (event.type === "submit") {
+        const formData = new FormData(this.form);
+        const dataObject = Object.fromEntries(formData);
         // TODO: (Optional)
+        console.log(this.settings.toHumanReadable());
         this.div.style.display = "none";
       }
     }
@@ -608,6 +641,7 @@ class AddressBook {
 const addressBook = new AddressBook();
 
 // Some sample initial formData.
+// NOTE: One of the AddressEntry below should be invalid.
 let formData;
 
 formData = new FormData();
@@ -653,7 +687,7 @@ if (formValidation(formData)) {
 formData = new FormData();
 formData.append("name", "Ty Ui");
 formData.append("telephone", "47222222");
-formData.append("email", "ty.ui@test.com");
+formData.append("email", "@INVALID.COM");
 if (formValidation(formData)) {
   addressBook.addEntry(formData);
 } else {
