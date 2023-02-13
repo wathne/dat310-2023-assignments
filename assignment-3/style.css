@@ -99,6 +99,12 @@ h6 {
   flex-wrap: wrap;
 }
 
+.flex-product-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .flex-footer {
   display: flex;
   flex-direction: row;
@@ -194,6 +200,7 @@ main .framed {
   border-color: #000000;
   border-width: 1px 1px 1px 1px;
   font-size: 0.8em;
+  padding: 5px 5px 5px 5px;
 }
 
 main .flex-content {
@@ -229,6 +236,7 @@ main article .img-container {
   /* TODO: Palette. */
   border-color: #000000;
   border-width: 2px 2px 2px 2px;
+  position: relative;
 }
 
 main article a:hover .img-container{
@@ -236,8 +244,25 @@ main article a:hover .img-container{
   border-color: #00AD43;
 }
 
+main article .discount-overlay {
+  background-color: #393233;
+  border-radius: 0.2em;
+  color: white;
+  font-size: 2em;
+  margin: 5px 5px 5px 5px;
+  padding: 5px 5px 5px 5px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+main article .discount-overlay:empty {
+  background-color: transparent;
+}
+
 main article img {
   display: block;
+  height: auto;
   width: 100%;
 }
 
@@ -250,10 +275,37 @@ main aside {
   max-width: 300px;
 }
 
+main .fieldline {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin: 5px 5px 5px 5px;
+  width: 25%
+}
+
+main .cart-fieldset-billing {
+}
+
+main .cart-fieldset-delivery {
+}
+
+main .cart-fieldset-billing input {
+  width: 10em
+}
+
+main .cart-fieldset-delivery input {
+  width: 10em
+}
+
+main .cart-fieldset-submit {
+}
+
 /* Footer */
 footer {
   /* The footer always stays at the bottom of the page. For extra points, the
    * footer can be "sticky": See Optional 2. */
+
+  /* NOTE: The footer is "sticky", therefore it will not be set to absolute.
 
   /* The height of the footer is 120px. It has a 5px wide top border. */
   border-style: solid;
