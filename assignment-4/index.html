@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAT310 Assignment 4</title>
+  <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<body class="flex-body">
+  <header class="flex-header">
+    <div class="flex-left-aligned">
+      <input id="filter-search" type="text" placeholder="Search...">
+      <input id="filter-sort-order" type="checkbox" checked>
+      <label for="filter-sort-order">
+        <span class="material-symbols-sharp">sort_by_alpha</span>
+      </label>
+      <select id="filter-criteria">
+        <option value="name">Name</option>
+        <option value="telephone">Telephone</option>
+        <option value="email">Email</option>
+      </select>
+    </div>
+    <div class="flex-right-aligned">
+      <button class="button-add-entry">Add entry</button>
+      <button class="button-settings">Settings</button>
+    </div>
+  </header>
+  <main class="flex-main">
+    <div id="main-extra" class="flex-main-extra">
+      <div id="add-entry" class="default-hidden framed">
+        <h3>Add entry</h3>
+        <button class="button-cancel">Cancel</button>
+        <form id="form-add-entry">
+          <label>
+            Name:
+            <input name="name" type="text">
+          </label>
+          </br>
+          <label>
+            Telephone:
+            <input name="telephone" type="text">
+          </label>
+          </br>
+          <label>
+            Email:
+            <input name="email" type="text">
+          </label>
+          </br>
+          <input type="submit" value="Add">
+        </form>
+      </div>
+      <div id="modify-entry" class="default-hidden framed">
+        <h3>Modify entry</h3>
+        <button class="button-cancel">Cancel</button>
+        <form id="form-modify-entry">
+          <label>
+            Name:
+            <input name="name" type="text">
+          </label>
+          </br>
+          <label>
+            Telephone:
+            <input name="telephone" type="text">
+          </label>
+          </br>
+          <label>
+            Email:
+            <input name="email" type="text">
+          </label>
+          </br>
+          <input type="submit" value="Modify">
+        </form>
+      </div>
+      <div id="delete-entry" class="default-hidden framed">
+        <h3>Delete entry</h3>
+        <button class="button-cancel">Cancel</button>
+        <form id="form-delete-entry">
+          <input type="submit" value="Delete">
+        </form>
+      </div>
+      <div id="settings" class="default-hidden framed">
+        <h3>Settings</h3>
+        <button class="button-cancel">Cancel</button>
+        <form id="form-settings">
+          <label>
+            Font:
+            <select name="font">
+              <option value="roboto-mono">Roboto Mono</option>
+            </select>
+          </label>
+          </br>
+          <label>
+            Size:
+            <label>
+              <input name="size" type="radio" value="small">
+              Small
+            </label>
+            <label>
+              <input name="size" type="radio" value="medium">
+              Medium
+            </label>
+            <label>
+              <input name="size" type="radio" value="large">
+              Large
+            </label>
+          </label>
+          </br>
+          <label>
+            Color:
+            <select name="color">
+              <option value="black">Black</option>
+            </select>
+          </label>
+          </br>
+          <input type="submit" value="Change">
+        </form>
+      </div>
+    </div>
+    <div id="main-content" class="flex-main-content framed">
+    </div>
+  </main>
+  <footer class="flex-footer">
+  </footer>
+  <script src="./script.js"></script>
+</body>
+</html>

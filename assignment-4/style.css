@@ -1,0 +1,166 @@
+/* Imports */
+/* https://fonts.google.com/icons?icon.set=Material+Symbols */
+@import url(https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,700,1,-25);
+
+
+/* Flexbox classes */
+.flex-body {
+}
+
+.flex-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.flex-left-aligned {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.flex-right-aligned {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.flex-main {
+}
+
+.flex-main-extra {
+}
+
+.flex-main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.flex-footer {
+}
+
+
+/* Other classes */
+.default-hidden {
+  display: none;
+}
+
+.framed {
+  border-style: solid;
+  border-color: #000000;
+  border-width: 4px 4px 4px 4px;
+  border-radius: 8px;
+  margin: 6px 3px 0px 3px;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+.address-entry {
+  background-color: lightgrey;
+  margin: 0.25em 0.25em 0.25em 0.25em;
+  border-radius: 8px;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+.address-entry-name {
+}
+
+.address-entry-telephone {
+}
+
+.address-entry-email {
+}
+
+.address-entry-email-mailto {
+}
+
+.button-add-entry {
+  margin: 0px 3px 0px 3px;
+}
+
+.button-modify-entry {
+  margin: 0px 3px 0px 3px;
+}
+
+.button-settings {
+  margin: 0px 3px 0px 3px;
+}
+
+.button-cancel {
+}
+
+
+/* Body */
+body {
+}
+
+
+/* Header */
+header {
+  padding: 0px 9px 0px 9px;
+}
+
+header #filter-search {
+  margin: 0px 3px 0px 3px;
+}
+
+header #filter-sort-order {
+  display: none;
+}
+
+header #filter-sort-order + label {
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+}
+
+header #filter-sort-order:checked + label {
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+}
+
+header #filter-criteria {
+  margin: 0px 3px 0px 3px;
+}
+
+
+/* Main */
+main {
+}
+
+main #main-extra {
+}
+
+main #add-entry {
+}
+
+main #form-add-entry {
+}
+
+main #modify-entry {
+}
+
+main #form-modify-entry {
+}
+
+main #delete-entry {
+}
+
+main #form-delete-entry {
+}
+
+main #settings {
+}
+
+main #form-settings {
+}
+
+main #main-content {
+}
+
+
+/* Footer */
+footer {
+}
+
