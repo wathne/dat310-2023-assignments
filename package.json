@@ -13,5 +13,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "kefir": "^3.8.8"
   }
 }
