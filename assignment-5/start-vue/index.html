@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Import Vue -->
+    <!-- development version, includes helpful console warnings -->
+<script src="https://unpkg.com/vue@3.0.5/dist/vue.global.js"></script>
+
+<script src="src/gamestat.js"></script>
+<script src="src/board.js"></script>
+
+<link rel="stylesheet" href="style.css">
+
+    <title>Vue Memory</title>
+</head>
+<body>
+    <div id="app">
+        <div id="startbutton">Start game</div>
+        <game-stat></game-stat>
+        <board></board>
+        <div id="winner" class="winner">
+            The winner is <span id="winnerSpan"></span>!
+        </div>
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            // place logic here for showing startbutton, stats, board, and winner
+            // additionally, you need logic for:
+            // - who's turn it is, 
+            // - how many pairs each player has found,
+            // - who is the winner.
+            // place this logic here, or in an external store.
+        });
+        app.component('board', boardC);
+        app.component('game-stat',gameStatC);
+        app.mount("#app");
+    </script>
+</body>
+</html>
