@@ -1,0 +1,221 @@
+/* Imports */
+/* https://fonts.google.com/specimen/Roboto+Mono */
+@import url(https://fonts.googleapis.com/css2?family=Roboto+Mono);
+
+
+/* Body */
+body {
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: 'Roboto+Mono', monospace, sans-serif;
+  font-size: 1.2em;
+  margin: 0px 0px 0px 0px;
+  min-height: 100vh;
+  padding: 0px 0px 0px 0px;
+}
+
+#flex-body {
+  /* Necessary for main {flex: auto;} */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+
+/* Header */
+header {
+  background-color: #8FBC8F;
+  border-color: #000000;
+  border-radius: 0px 0px 15% 15%;
+  border-style: solid;
+  border-width: 0px 0px 0px 0px;
+  padding: 0px 0px 0.5% 0px;
+}
+
+#flex-header {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#player-1-title {
+  font-size: 1.2em;
+  padding: 0.1em 0px 0px 0px;
+}
+
+#player-2-title {
+  font-size: 1.2em;
+  padding: 0.1em 0px 0px 0px;
+}
+
+#player-1-score {
+  padding: 0.1em 0px 0px 0.3em;
+}
+
+#player-2-score {
+  padding: 0.1em 0px 0px 0.3em;
+}
+
+#player-1-score-count {
+}
+
+#player-2-score-count {
+}
+
+#player-1-flips {
+  padding: 0.1em 0px 0px 0.3em;
+}
+
+#player-2-flips {
+  padding: 0.1em 0px 0px 0.3em;
+}
+
+#player-1-flips-count {
+}
+
+#player-2-flips-count {
+}
+
+#range-new-game {
+  margin: 0.3em 2em 0px 2em;
+}
+
+#button-new-game {
+  margin: 0.3em 2em 0px 2em;
+  padding: 0.1em 0.3em 0.3em 0.3em;
+}
+
+#turn-header {
+  padding: 0.3em 0px 0px 0px;
+}
+
+#turn-header-player {
+}
+
+
+/* Main */
+main {
+  flex: auto;
+}
+
+#flex-main {
+  /* Necessary for #game-board {... flex: auto; ...} */
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+#game-board {
+  aspect-ratio: 4/5;
+  background-color: #8FBC8F;
+  border-color: #000000;
+  border-radius: 3% 3% 3% 3%;
+  border-style: solid;
+  border-width: 0px 0px 0px 0px;
+  display: grid;
+  flex: auto;
+  /* See script.js: Set the grid-template-columns property to n-by-n. */
+  grid-template-columns: repeat(6, 1fr);
+  height: 100%;
+  margin: 1% 1% 1% 1%;
+  padding: 1% 1% 1% 1%;
+}
+
+/* Footer */
+footer {
+}
+
+#flex-footer {
+}
+
+
+/* Flexbox classes */
+.flex-row-left-aligned {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.flex-row-right-aligned {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.flex-column-top-aligned {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.flex-column-bottom-aligned {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* See also .game-card-front */
+
+
+/* Other classes */
+.visibility-hidden {
+  visibility: hidden;
+}
+
+.game-card {
+  background-color: transparent;
+  margin: 3% 3% 3% 3%;
+  padding: 3% 3% 3% 3%;
+}
+
+.game-card:hover .game-card-inner {
+  transform: rotateY(18deg);
+  transition: transform 0.05s;
+}
+
+.game-card-inner {
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+  width: 100%;
+}
+
+.game-card-label {
+  font-size: 2em;
+}
+
+.game-card-front {
+  -webkit-backface-visibility: hidden;
+  align-items: center;
+  backface-visibility: hidden;
+  background-color: #FFFFFF;
+  border-color: #000000;
+  border-radius: 6% 6% 6% 6%;
+  border-style: solid;
+  border-width: 0px 0px 0px 0px;
+  color: #2F4F4F;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  justify-content: center;
+  position: absolute;
+  transform: rotateY(180deg);
+  width: 100%;
+}
+
+.game-card-back {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background-color: #2F4F4F;
+  border-color: #000000;
+  border-radius: 6% 6% 6% 6%;
+  border-style: solid;
+  border-width: 0px 0px 0px 0px;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+

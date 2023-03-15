@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAT310 Assignment 5</title>
+  <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<body id="flex-body">
+  <header id="flex-header">
+    <div class="flex-row-left-aligned">
+      <div class="flex-column-top-aligned">
+        <div id="player-1-title"
+          >player 1</div>
+        <div id="player-1-score"
+          >score: <span id="player-1-score-count">0</span></div>
+        <div id="player-1-flips"
+          >flips: <span id="player-1-flips-count">0</span></div>
+      </div>
+    </div>
+    <div class="flex-column-top-aligned">
+      <input
+          id="range-new-game"
+          type="range" min="4" max="14" value="6" step="2">
+      <button id="button-new-game"
+        >start new game (6x6)</button>
+      <div id="turn-header"
+        >your turn, player <span id="turn-header-player">1</span></div>
+    </div>
+    <div class="flex-row-right-aligned">
+      <div class="flex-column-top-aligned">
+        <div id="player-2-title"
+          >player 2</div>
+        <div id="player-2-score"
+          >score: <span id="player-2-score-count">0</span></div>
+        <div id="player-2-flips"
+          >flips: <span id="player-2-flips-count">0</span></div>
+      </div>
+    </div>
+  </header>
+  <main id="flex-main">
+    <div id="game-board" class="visibility-hidden">
+      <!--
+      <div class="game-card"></div>
+      <div class="game-card"></div>
+      <div class="game-card"></div>
+      <div class="game-card"></div>
+      ...
+      -->
+    </div>
+  </main>
+  <footer id="flex-footer">
+  </footer>
+  <script 
+      src="https://unpkg.com/rxjs@%5E7/dist/bundles/rxjs.umd.min.js"
+      type="text/javascript">
+  </script>
+  <script src="./script.js" type="text/javascript">
+  </script>
+</body>
+</html>

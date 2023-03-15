@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Memory</title>
+</head>
+<body>
+    <div id="app">
+        <div id="startbutton">Start game</div>
+        <div id="gamestat">
+            <div id="player1" class="current-player">
+                <p>
+                    <span>Player 1:</span>&nbsp;<span class="score"> 0</span>
+                </p>
+                <p>
+                    <span class="flips">0</span>&nbsp;flips
+                </p>
+            </div>
+            <div id="stat">
+                <span id="currentPlayer">Player 1</span>
+            </div>
+            <div id="player2">
+                <p>
+                    <span>Player 2:</span>&nbsp;<span class="score">0</span>
+                </p>
+                <p>
+                    <span class="flips">0</span>&nbsp;flips
+                </p>
+            </div>
+        </div>
+        <div id="cardboard" class="cardboard" style="width: 400px;">
+            <div class="outer flipped">
+                <!-- class flipped flipps the card -->
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer flipped">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer removed">
+                <!-- class removed hides the card -->
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer removed">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+            <div class="outer">
+                <div class="card front">
+                    <img src="images/A.png">
+                </div>
+                <div class="card back"></div>
+            </div>
+        </div>
+        <div id="winner" class="winner">
+            The winner is <span id="winnerSpan"></span>!
+        </div>
+
+
+    </div>
+
+    <script>
+        const imageLetters = ["A", "B", "C", "D", "E","F","G","H"];
+        function mixedCards(){
+            let cards = [];
+            for (let i = 0; i< imageLetters.length; i++){
+                cards.push(new Card(imageLetters[i]));
+                cards.push(new Card(imageLetters[i]));
+            }
+            // mix cards, e.g.
+            // - repeatedly take a random card from cards
+            // - add it to a new array mixedCards
+            // - remove it from cards
+            return cards;
+        }
+    </script>
+</body>
+</html>
