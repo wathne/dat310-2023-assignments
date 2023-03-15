@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assignment 6: Gradebook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+    
+    <h1>Courses</h1>
+    
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course Id</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+        
+                <!-- Add rows here -->
+        
+            </tbody>
+            </table>
+        
+            
+
+    <h1>Students</h1>
+
+    
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student no</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                {% for student in students %}
+                <tr>
+                    <!-- Add correct link below -->
+                    <td><a href="">{{ student.student_no }} </a></td>
+                    <td>{{ student.name }}</td>
+                </tr>
+
+                {% endfor %}
+        
+        
+            </tbody>
+            </table>
+        
+    
+
+    <a href="">add new student</a>
+
+ 
+</body>
+</html>
