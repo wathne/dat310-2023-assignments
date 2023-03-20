@@ -24,7 +24,7 @@ from flask import g
 from flask import render_template
 from flask import request
 from flask import redirect
-#from flask import url_for
+from flask import url_for
 #from setup_db import add_course
 from setup_db import add_grade
 from setup_db import add_student
@@ -107,16 +107,25 @@ def sendform_add_student() -> Response | tuple[str, int]:
 
     if db is None:
         return ("No database connection.", 500)
-    # TODO: Set to available student_no between 100000 and 999999.
+    # pylint: disable-next=line-too-long
+    students: list[dict[str, int | str]] = select_students(conn=db) # type: ignore [no-untyped-call]
+
+    reserved: set[int] = set()
+    for student in students:
+        reserved.add(int(student["student_no"]))
+
     next_student_no: int = 100000
+    while next_student_no < 999999:
+        if next_student_no not in reserved:
+            break
+        next_student_no += 1
 
     add_student(
         conn=db,
         student_no=next_student_no,
         name=form_name,
     ) # type: ignore [no-untyped-call]
-    # TODO: url_for()
-    return redirect(location="/", code=302)
+    return redirect(location=url_for("index"), code=302)
 
 
 @app.route("/add_grade")
@@ -397,8 +406,7 @@ def template_course(
             grade_count=grade_count,
         ), 200)
     # TODO: 404 page.
-    # TODO: url_for()
-    return redirect(location="/", code=404)
+    return redirect(location=url_for("index"), code=404)
 
 
 @app.route("/student/<student_no>")
@@ -443,8 +451,7 @@ def template_student(
             courses_and_grades=courses_and_grades_sorted,
         ), 200)
     # TODO: 404 page.
-    # TODO: url_for()
-    return redirect(location="/", code=404)
+    return redirect(location=url_for("index"), code=404)
 
 
 if __name__ == "__main__":

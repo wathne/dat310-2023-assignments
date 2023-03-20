@@ -26,42 +26,14 @@
       </tr>
     </thead>
     <tbody>
-    {% if grade_count['a'] >= 1 %}
-      <tr>
-        <td>A</td>
-        <td>{{ grade_count['a'] }}</td>
-      </tr>
-    {% endif %}
-    {% if grade_count['b'] >= 1 %}
-      <tr>
-        <td>B</td>
-        <td>{{ grade_count['b'] }}</td>
-      </tr>
-    {% endif %}
-    {% if grade_count['c'] >= 1 %}
-      <tr>
-        <td>C</td>
-        <td>{{ grade_count['c'] }}</td>
-      </tr>
-    {% endif %}
-    {% if grade_count['d'] >= 1 %}
-      <tr>
-        <td>D</td>
-        <td>{{ grade_count['d'] }}</td>
-      </tr>
-    {% endif %}
-    {% if grade_count['e'] >= 1 %}
-      <tr>
-        <td>E</td>
-        <td>{{ grade_count['e'] }}</td>
-      </tr>
-    {% endif %}
-    {% if grade_count['f'] >= 1 %}
-      <tr>
-        <td>F</td>
-        <td>{{ grade_count['f'] }}</td>
-      </tr>
-    {% endif %}
+    {% for letter in ['a', 'b', 'c', 'd', 'e', 'f'] %}
+      {% if grade_count[letter] > 0 %}
+        <tr>
+          <td>{{ letter.upper() }}</td>
+          <td>{{ grade_count[letter] }}</td>
+        </tr>
+      {% endif %}
+    {% endfor %}
     </tbody>
   </table>
   <br>
