@@ -115,6 +115,7 @@ def sendform_add_student() -> Response | tuple[str, int]:
         student_no=next_student_no,
         name=form_name,
     ) # type: ignore [no-untyped-call]
+    # TODO: url_for()
     return redirect(location="/", code=302)
 
 
@@ -162,7 +163,7 @@ def form_add_grade(
 
     course: dict[str, str]
     for course in courses:
-        if course["course_id"] != source:
+        if str(course["course_id"]) != str(source):
             continue
         return (render_template(
             template_name_or_list="form_add_grade.html",
@@ -177,7 +178,7 @@ def form_add_grade(
 
     student: dict[str, int | str]
     for student in students:
-        if student["student_no"] != source:
+        if int(student["student_no"]) != int(source):
             continue
         return (render_template(
             template_name_or_list="form_add_grade.html",
@@ -260,6 +261,8 @@ def sendform_add_grade(
     if form_grade is None:
         bad_form = True
 
+    # TODO: Modify old grade, else add new grade.
+
     if not bad_form:
         add_grade(
             conn=db,
@@ -267,6 +270,9 @@ def sendform_add_grade(
             student_no=form_student_no,
             grade=form_grade,
         ) # type: ignore [no-untyped-call]
+
+        # TODO: Check if this grade is in the database.
+
         return (render_template(
             template_name_or_list="form_add_grade_success.html",
         ), 200)
@@ -285,7 +291,7 @@ def sendform_add_grade(
 
     course: dict[str, str]
     for course in courses:
-        if course["course_id"] != source:
+        if str(course["course_id"]) != str(source):
             continue
         return (render_template(
             template_name_or_list="form_add_grade_error.html",
@@ -300,7 +306,7 @@ def sendform_add_grade(
 
     student: dict[str, int | str]
     for student in students:
-        if student["student_no"] != source:
+        if int(student["student_no"]) != int(source):
             continue
         return (render_template(
             template_name_or_list="form_add_grade_error.html",
@@ -351,15 +357,15 @@ def template_course(
     }
 
     for course in courses:
-        if course["course_id"] != course_id:
+        if str(course["course_id"]) != str(course_id):
             continue
         grades = select_grades(conn=db) # type: ignore [no-untyped-call]
         for grade in grades:
-            if grade["course_id"] != course["course_id"]:
+            if str(grade["course_id"]) != str(course["course_id"]):
                 continue
             students = select_students(conn=db) # type: ignore [no-untyped-call]
             for student in students:
-                if student["student_no"] != grade["student_no"]:
+                if int(student["student_no"]) != int(grade["student_no"]):
                     continue
                 grades_and_students.append({
                     "name": str(student["name"]),
@@ -385,20 +391,60 @@ def template_course(
             key=lambda gs: gs["grade"],
         )
         return (render_template(
-            "course_id.html",
+            template_name_or_list="course_id.html",
             course=course,
             grades_and_students=grades_and_students_sorted,
             grade_count=grade_count,
         ), 200)
     # TODO: 404 page.
+    # TODO: url_for()
     return redirect(location="/", code=404)
 
 
 @app.route("/student/<student_no>")
 def template_student(
     student_no: str | None = None,
-) -> tuple[str, int]:
-    return (f"TODO: show /student/{student_no}.html", 200)
+) -> Response | tuple[str, int]:
+    if db is None:
+        return ("No database connection.", 500)
+    courses: list[dict[str, str]]
+    grades: list[dict[str, int | str]]
+    # pylint: disable-next=line-too-long
+    students: list[dict[str, int | str]] = select_students(conn=db) # type: ignore [no-untyped-call]
+    course: dict[str, str]
+    grade: dict[str, int | str]
+    student: dict[str, int | str]
+    courses_and_grades: list[dict[str, str]] = []
+    courses_and_grades_sorted: list[dict[str, str]]
+
+    for student in students:
+        if str(student["student_no"]) != str(student_no):
+            continue
+        grades = select_grades(conn=db) # type: ignore [no-untyped-call]
+        for grade in grades:
+            if int(grade["student_no"]) != int(student["student_no"]):
+                continue
+            courses = select_courses(conn=db) # type: ignore [no-untyped-call]
+            for course in courses:
+                if str(course["course_id"]) != str(grade["course_id"]):
+                    continue
+                courses_and_grades.append({
+                    "course_id": course["course_id"],
+                    "name": course["name"],
+                    "grade": str(grade["grade"]),
+                })
+        courses_and_grades_sorted = sorted(
+            courses_and_grades,
+            key=lambda cg: cg["course_id"],
+        )
+        return (render_template(
+            template_name_or_list="student_no.html",
+            student=student,
+            courses_and_grades=courses_and_grades_sorted,
+        ), 200)
+    # TODO: 404 page.
+    # TODO: url_for()
+    return redirect(location="/", code=404)
 
 
 if __name__ == "__main__":

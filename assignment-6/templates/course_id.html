@@ -1,23 +1,82 @@
 {% extends 'base.html' %}
-
 {% block main %}
-<div>{{ course['course_id'] }}, {{ course['name'] }}</div>
-{% for grade_and_student in grades_and_students %}
-<div>{{ grade_and_student['name'] }}, {{ grade_and_student['grade'] }}</div>
-{% endfor %}
-<div></div>
-<br>
-<form action="/add_grade" method="POST">
-  <input name="locked_course_id" type="hidden" value="{{ course.course_id }}">
-  <input type="submit" value="add grade (POST)">
-</form>
-<br>
-<form action="{{ url_for('form_add_grade', source=course.course_id) }}">
-  <input type="submit" value="add grade (url_for())">
-</form>
-<br>
-<form action="/add_grade_{{ course.course_id }}">
-  <input type="submit" value="add grade (/add_grade_{course_id})">
-</form>
-<br>
+  <div>{{ course['course_id'] }}, {{ course['name'] }}</div>
+  <table>
+    <thead>
+      <tr>
+        <th>name</th>
+        <th>grade</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for grade_and_student in grades_and_students %}
+      <tr>
+        <td>{{ grade_and_student['name'] }}</td>
+        <td>{{ grade_and_student['grade'] }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div>summary</div>
+  <table>
+    <thead>
+      <tr>
+        <th>grade</th>
+        <th>count</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% if grade_count['a'] >= 1 %}
+      <tr>
+        <td>A</td>
+        <td>{{ grade_count['a'] }}</td>
+      </tr>
+    {% endif %}
+    {% if grade_count['b'] >= 1 %}
+      <tr>
+        <td>B</td>
+        <td>{{ grade_count['b'] }}</td>
+      </tr>
+    {% endif %}
+    {% if grade_count['c'] >= 1 %}
+      <tr>
+        <td>C</td>
+        <td>{{ grade_count['c'] }}</td>
+      </tr>
+    {% endif %}
+    {% if grade_count['d'] >= 1 %}
+      <tr>
+        <td>D</td>
+        <td>{{ grade_count['d'] }}</td>
+      </tr>
+    {% endif %}
+    {% if grade_count['e'] >= 1 %}
+      <tr>
+        <td>E</td>
+        <td>{{ grade_count['e'] }}</td>
+      </tr>
+    {% endif %}
+    {% if grade_count['f'] >= 1 %}
+      <tr>
+        <td>F</td>
+        <td>{{ grade_count['f'] }}</td>
+      </tr>
+    {% endif %}
+    </tbody>
+  </table>
+  <br>
+  <form action="/add_grade" method="POST">
+    <input name="locked_course_id" type="hidden"
+        value="{{ course['course_id'] }}">
+    <input type="submit" value="add grade (POST)">
+  </form>
+  <br>
+  <form action="{{ url_for('form_add_grade', source=course['course_id']) }}">
+    <input type="submit" value="add grade (url_for())">
+  </form>
+  <br>
+  <form action="/add_grade_{{ course['course_id'] }}">
+    <input type="submit" value="add grade (/add_grade_{course_id})">
+  </form>
+  <br>
 {% endblock %}

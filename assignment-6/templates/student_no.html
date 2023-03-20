@@ -1,6 +1,41 @@
 {% extends 'base.html' %}
 {% block main %}
-  <div><a href="">{{ student['student_no'] }}</a></div>
-  <div><a href="">{{ student['name'] }}</a></div>
-  {% endfor %}
+  <div>{{ student['name'] }}, {{ student['student_no'] }}</div>
+  <table>
+    <thead>
+      <tr>
+        <th>course id</th>
+        <th>name</th>
+        <th>grade</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for course_and_grade in courses_and_grades %}
+      <tr>
+        <td>
+          <a href="{{ url_for('template_course',
+              course_id=course_and_grade['course_id']) }}"
+              >{{ course_and_grade['course_id'] }}</a>
+        </td>
+        <td>{{ course_and_grade['name'] }}</td>
+        <td>{{ course_and_grade['grade'] }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <br>
+  <form action="/add_grade" method="POST">
+    <input name="locked_student_no" type="hidden"
+        value="{{ student['student_no'] }}">
+    <input type="submit" value="add grade (POST)">
+  </form>
+  <br>
+  <form action="{{ url_for('form_add_grade', source=student['student_no']) }}">
+    <input type="submit" value="add grade (url_for())">
+  </form>
+  <br>
+  <form action="/add_grade_{{ student['student_no'] }}">
+    <input type="submit" value="add grade (/add_grade_{student_no})">
+  </form>
+  <br>
 {% endblock %}
