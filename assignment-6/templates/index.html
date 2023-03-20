@@ -14,9 +14,9 @@
         <td>
           <a href="{{ url_for('template_course',
               course_id=course['course_id']) }}"
-              >{{ course.course_id }}</a>
+              >{{ course['course_id'] }}</a>
         </td>
-        <td>{{ course.name }}</td>
+        <td>{{ course['name'] }}</td>
       </tr>
     {% endfor %}
     </tbody>
@@ -35,9 +35,9 @@
         <td>
           <a href="{{ url_for('template_student',
               student_no=student['student_no']) }}"
-              >{{ student.student_no }}</a>
+              >{{ student['student_no'] }}</a>
         </td>
-        <td>{{ student.name }}</td>
+        <td>{{ student['name'] }}</td>
       </tr>
     {% endfor %}
     </tbody>
