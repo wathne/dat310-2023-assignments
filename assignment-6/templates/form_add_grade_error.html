@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block main %}
+{% if form_student_no is none %}
+  <div class="error">Please select student_no</div>
+{% endif %}
+{% if form_course_id is none %}
+  <div class="error">Please select course_id</div>
+{% endif %}
+{% if form_grade is none %}
+  <div class="error">Please select grade</div>
+{% endif %}
+  <div>add grade</div>
+  <form action="/sendform_add_grade" method="POST">
+    <label for="student_no">student_no</label>
+    <select id="student_no" name="student_no">
+    {% if locked_student_no is none %}
+        <option value="">select student_no</option>
+      {% for student in students %}
+        <option value="{{ student['student_no'] }}"
+            >{{ student['student_no'] }}</option>
+      {% endfor %}
+    {% else %}
+        <option value="{{ locked_student_no }}" selected
+            >{{ locked_student_no }}</option>
+    {% endif %}
+    </select>
+    <label for="course_id">course_id</label>
+    <select id="course_id" name="course_id">
+    {% if locked_course_id is none %}
+        <option value="">select course_id</option>
+      {% for course in courses %}
+        <option value="{{ course['course_id'] }}"
+            >{{ course['course_id'] }}</option>
+      {% endfor %}
+    {% else %}
+        <option value="{{ locked_course_id }}" selected
+            >{{ locked_course_id }}</option>
+    {% endif %}
+    </select>
+    <label for="grade">grade</label>
+    <select id="grade" name="grade">
+      <option value="">select grade</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+    </select>
+  {% if locked_course_id is none %}
+    <input name="locked_course_id" type="hidden">
+  {% else %}
+    <input name="locked_course_id" type="hidden"
+        value="{{ locked_course_id }}">
+  {% endif %}
+  {% if locked_student_no is none %}
+    <input name="locked_student_no" type="hidden">
+  {% else %}
+    <input name="locked_student_no" type="hidden"
+        value="{{ locked_student_no }}">
+  {% endif %}
+    <input type="submit" value="submit">
+  </form>
+{% endblock %}

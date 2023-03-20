@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block main %}
+  <h1>Courses</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>course id</th>
+        <th>name</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for course in courses %}
+      <tr>
+        <td>
+          <a href="{{ url_for('template_course',
+              course_id=course['course_id']) }}"
+              >{{ course.course_id }}</a>
+        </td>
+        <td>{{ course.name }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <h1>Students</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>student no</th>
+        <th>name</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for student in students %}
+      <tr>
+        <td>
+          <a href="{{ url_for('template_student',
+              student_no=student['student_no']) }}"
+              >{{ student.student_no }}</a>
+        </td>
+        <td>{{ student.name }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <a href="{{ url_for('form_add_student') }}">add student</a>
+{% endblock %}

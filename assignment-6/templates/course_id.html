@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div>{{ course['course_id'] }}, {{ course['name'] }}</div>
+{% for grade_and_student in grades_and_students %}
+<div>{{ grade_and_student['name'] }}, {{ grade_and_student['grade'] }}</div>
+{% endfor %}
+<div></div>
+<br>
+<form action="/add_grade" method="POST">
+  <input name="locked_course_id" type="hidden" value="{{ course.course_id }}">
+  <input type="submit" value="add grade (POST)">
+</form>
+<br>
+<form action="{{ url_for('form_add_grade', source=course.course_id) }}">
+  <input type="submit" value="add grade (url_for())">
+</form>
+<br>
+<form action="/add_grade_{{ course.course_id }}">
+  <input type="submit" value="add grade (/add_grade_{course_id})">
+</form>
+<br>
+{% endblock %}
