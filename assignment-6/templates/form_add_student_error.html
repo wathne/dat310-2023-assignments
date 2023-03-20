@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block main %}
+  <div class="error">Please submit a valid name.</div>
+  <div>add student</div>
+  <form action="/sendform_add_student" method="POST">
+    <label for="name">name</label>
+    <input id="name" name="name" type="text">
+    <input type="submit" value="submit">
+  </form>
+{% endblock %}
