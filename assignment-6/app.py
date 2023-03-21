@@ -33,7 +33,7 @@ from setup_db import select_courses
 from setup_db import select_grades
 from setup_db import select_students
 from sqlite3 import Connection
-#from typing import Any
+from typing import cast
 from werkzeug.local import LocalProxy
 from werkzeug.wrappers.response import Response
 
@@ -44,14 +44,13 @@ app.secret_key = "60c0b19326352a4b247c149cc6690a20"
 
 
 def get_db() -> Connection | None:
-    return g.setdefault( # type: ignore [no-any-return]
+    return cast(Connection | None, g.setdefault(
         name="db",
-        # pylint: disable-next=line-too-long
-        default=create_connection(db_file=_database), # type: ignore [no-untyped-call]
-    )
+        default=create_connection(db_file=_database),
+    ))
 
 
-db: LocalProxy[Connection | None] | Connection | None = None
+db: LocalProxy[Connection | None] | None = None
 if callable(get_db):
     db = LocalProxy(local=get_db)
 
@@ -59,7 +58,10 @@ if callable(get_db):
 @app.teardown_appcontext
 # pylint: disable-next=unused-argument
 def teardown_db(exc: BaseException | None = None) -> None:
-    db_popped: Connection | None = g.pop(name="db", default=None)
+    db_popped: Connection | None = cast(Connection | None, g.pop(
+        name="db",
+        default=None,
+    ))
     if db_popped is not None:
         db_popped.close()
 
@@ -67,12 +69,11 @@ def teardown_db(exc: BaseException | None = None) -> None:
 @app.route("/")
 @app.route("/index")
 def index() -> tuple[str, int]:
-    if db is None:
+    cast_db: Connection | None = cast(Connection | None, db)
+    if cast_db is None:
         return ("No database connection.", 500)
-    # pylint: disable-next=line-too-long
-    courses: list[dict[str, str]] = select_courses(conn=db) # type: ignore [no-untyped-call]
-    # pylint: disable-next=line-too-long
-    students: list[dict[str, int | str]] = select_students(conn=db) # type: ignore [no-untyped-call]
+    courses: list[dict[str, str]] = select_courses(conn=cast_db)
+    students: list[dict[str, int | str]] = select_students(conn=cast_db)
 
     courses_sorted: list[dict[str, str]] = sorted(
         courses,
@@ -99,16 +100,20 @@ def form_add_student() -> tuple[str, int]:
 
 @app.route("/sendform_add_student", methods=["POST"])
 def sendform_add_student() -> Response | tuple[str, int]:
-    form_name: str = request.form.get(key="name", default="", type=str)
+    form_name: str = request.form.get(
+        key="name",
+        default="",
+        type=str,
+    )
     if not form_name:
         return (render_template(
             template_name_or_list="form_add_student_error.html",
         ), 200)
 
-    if db is None:
+    cast_db: Connection | None = cast(Connection | None, db)
+    if cast_db is None:
         return ("No database connection.", 500)
-    # pylint: disable-next=line-too-long
-    students: list[dict[str, int | str]] = select_students(conn=db) # type: ignore [no-untyped-call]
+    students: list[dict[str, int | str]] = select_students(conn=cast_db)
 
     reserved: set[int] = set()
     for student in students:
@@ -121,10 +126,10 @@ def sendform_add_student() -> Response | tuple[str, int]:
         next_student_no += 1
 
     add_student(
-        conn=db,
+        conn=cast_db,
         student_no=next_student_no,
         name=form_name,
-    ) # type: ignore [no-untyped-call]
+    )
     return redirect(location=url_for("index"), code=302)
 
 
@@ -151,12 +156,11 @@ def form_add_grade(
     if locked_student_no is not None:
         source = locked_student_no
 
-    if db is None:
+    cast_db: Connection | None = cast(Connection | None, db)
+    if cast_db is None:
         return ("No database connection.", 500)
-    # pylint: disable-next=line-too-long
-    courses: list[dict[str, str]] = select_courses(conn=db) # type: ignore [no-untyped-call]
-    # pylint: disable-next=line-too-long
-    students: list[dict[str, int | str]] = select_students(conn=db) # type: ignore [no-untyped-call]
+    courses: list[dict[str, str]] = select_courses(conn=cast_db)
+    students: list[dict[str, int | str]] = select_students(conn=cast_db)
 
     if source is None:
         return (render_template(
@@ -255,30 +259,19 @@ def sendform_add_grade(
         type=int,
     )
 
-    if db is None:
+    cast_db: Connection | None = cast(Connection | None, db)
+    if cast_db is None:
         return ("No database connection.", 500)
-    # pylint: disable-next=line-too-long
-    courses: list[dict[str, str]] = select_courses(conn=db) # type: ignore [no-untyped-call]
-    # pylint: disable-next=line-too-long
-    students: list[dict[str, int | str]] = select_students(conn=db) # type: ignore [no-untyped-call]
+    courses: list[dict[str, str]] = select_courses(conn=cast_db)
+    students: list[dict[str, int | str]] = select_students(conn=cast_db)
 
-    bad_form: bool = False
-    if form_course_id is None:
-        bad_form = True
-    if form_student_no is None:
-        bad_form = True
-    if form_grade is None:
-        bad_form = True
-
-    # TODO: Modify old grade, else add new grade.
-
-    if not bad_form:
+    if form_course_id and form_student_no and form_grade:
         add_grade(
-            conn=db,
+            conn=cast_db,
             course_id=form_course_id,
             student_no=form_student_no,
             grade=form_grade,
-        ) # type: ignore [no-untyped-call]
+        )
 
         # TODO: Check if this grade is in the database.
 
@@ -344,10 +337,10 @@ def sendform_add_grade(
 def template_course(
     course_id: str | None = None,
 ) -> Response | tuple[str, int]:
-    if db is None:
+    cast_db: Connection | None = cast(Connection | None, db)
+    if cast_db is None:
         return ("No database connection.", 500)
-    # pylint: disable-next=line-too-long
-    courses: list[dict[str, str]] = select_courses(conn=db) # type: ignore [no-untyped-call]
+    courses: list[dict[str, str]] = select_courses(conn=cast_db)
     grades: list[dict[str, int | str]]
     students: list[dict[str, int | str]]
     course: dict[str, str]
@@ -368,11 +361,11 @@ def template_course(
     for course in courses:
         if str(course["course_id"]) != str(course_id):
             continue
-        grades = select_grades(conn=db) # type: ignore [no-untyped-call]
+        grades = select_grades(conn=cast_db)
         for grade in grades:
             if str(grade["course_id"]) != str(course["course_id"]):
                 continue
-            students = select_students(conn=db) # type: ignore [no-untyped-call]
+            students = select_students(conn=cast_db)
             for student in students:
                 if int(student["student_no"]) != int(grade["student_no"]):
                     continue
@@ -413,12 +406,12 @@ def template_course(
 def template_student(
     student_no: str | None = None,
 ) -> Response | tuple[str, int]:
-    if db is None:
+    cast_db: Connection | None = cast(Connection | None, db)
+    if cast_db is None:
         return ("No database connection.", 500)
     courses: list[dict[str, str]]
     grades: list[dict[str, int | str]]
-    # pylint: disable-next=line-too-long
-    students: list[dict[str, int | str]] = select_students(conn=db) # type: ignore [no-untyped-call]
+    students: list[dict[str, int | str]] = select_students(conn=cast_db)
     course: dict[str, str]
     grade: dict[str, int | str]
     student: dict[str, int | str]
@@ -428,11 +421,11 @@ def template_student(
     for student in students:
         if str(student["student_no"]) != str(student_no):
             continue
-        grades = select_grades(conn=db) # type: ignore [no-untyped-call]
+        grades = select_grades(conn=cast_db)
         for grade in grades:
             if int(grade["student_no"]) != int(student["student_no"]):
                 continue
-            courses = select_courses(conn=db) # type: ignore [no-untyped-call]
+            courses = select_courses(conn=cast_db)
             for course in courses:
                 if str(course["course_id"]) != str(grade["course_id"]):
                     continue
