@@ -10,16 +10,17 @@ from flask import request # request is a LocalProxy.
 from flask import session # session is a LocalProxy.
 from flask import url_for
 from flask.ctx import _AppCtxGlobals as ACG # g real type.
+from flask.json import jsonify
 from flask.sessions import SecureCookieSession as SCS # session real type.
 from flask.wrappers import Request # request real type.
 from flask.wrappers import Response
 #from setup_db import create_user_table
 #from setup_db import create_address_table
 #from setup_db import add_user
-#from setup_db import insert_address
-#from setup_db import update_address
-#from setup_db import delete_address
-#from setup_db import get_user_addresses
+from setup_db import insert_address
+from setup_db import update_address
+from setup_db import delete_address
+from setup_db import get_user_addresses
 from setup_db import get_user_by_name
 #from setup_db import get_user_by_id
 from setup_db import get_hash_for_login
@@ -213,6 +214,14 @@ def clear_session() -> WerkzeugResponse | Response:
     )
 
 
+@app.route("/test")
+def test() -> tuple[str, int]:
+    # pylint: disable=protected-access
+    return (render_template(
+        template_name_or_list="test.html",
+    ), 200)
+
+
 @app.route("/")
 @app.route("/index")
 def index() -> WerkzeugResponse | Response:
@@ -270,6 +279,126 @@ def login() -> tuple[str, int]:
     return (render_template(
         template_name_or_list="form_login.html",
     ), 200)
+
+
+@app.route(
+    "/addresses",
+    methods=["GET", "PUT", "POST", "DELETE"],
+)
+def addresses() -> Response:
+    # pylint: disable=protected-access
+    acg: ACG = cast(LP[ACG], g)._get_current_object()
+    request_: Request = cast(LP[Request], request)._get_current_object()
+    db_con: Connection | None = get_database_connection()
+    if db_con is None:
+        return jsonify(None)
+
+    if acg.user is None:
+        return jsonify(None)
+
+    # RESTful API: List elements.
+    if request_.method == "GET":
+        db_user_addresses: list[dict[str, str | int | None]] | None = None
+        try:
+            db_user_addresses = get_user_addresses(
+                conn=db_con,
+                userid=acg.user,
+            )
+        except AnySqlite3Error as err:
+            print(err)
+            return jsonify(None)
+        if db_user_addresses is None:
+            return jsonify(None)
+        return jsonify(db_user_addresses)
+
+    # RESTful API: Replace the entire collection.
+    if request_.method == "PUT":
+        # Not implemented.
+        return jsonify(None)
+
+    # RESTful API: Create a new element in the collection.
+    if request_.method == "POST":
+        form_name = request_.form.get(
+            key="name",
+            default=None,
+            type=str,
+        )
+        form_email = request_.form.get(
+            key="email",
+            default=None,
+            type=str,
+        )
+        form_tel = request_.form.get(
+            key="tel",
+            default=None,
+            type=str,
+        )
+        if form_name is None:
+            return jsonify(None)
+
+        db_address_id: int = -1
+        try:
+            db_address_id = insert_address(
+                conn=db_con,
+                name=form_name,
+                email=form_email,
+                tel=form_tel,
+                userid=acg.user,
+            )
+        except AnySqlite3Error as err:
+            print(err)
+            return jsonify(None)
+        if db_address_id == -1:
+            return jsonify(None)
+        return jsonify(db_address_id)
+
+    # RESTful API: Delete the entire collection.
+    if request_.method == "DELETE":
+        # Not implemented.
+        return jsonify(None)
+
+    return jsonify(None)
+
+
+@app.route(
+    "/addresses/<int:addressid>",
+    methods=["GET", "PUT", "POST", "DELETE"],
+)
+def address(addressid: int | None = None) -> Response:
+    # pylint: disable=protected-access
+    acg: ACG = cast(LP[ACG], g)._get_current_object()
+    request_: Request = cast(LP[Request], request)._get_current_object()
+    db_con: Connection | None = get_database_connection()
+    if db_con is None:
+        return jsonify(None)
+
+    if addressid is None:
+        return jsonify(None)
+
+    if acg.user is None:
+        return jsonify(None)
+
+    # RESTful API: Retrieve the representation of an element.
+    if request_.method == "GET":
+        # Not implemented.
+        return jsonify(None)
+
+    # RESTful API: Replace element, create if it doesn't exist.
+    if request_.method == "PUT":
+        #update_address
+        return jsonify(None) # TODO: Implement this.
+
+    # RESTful API: Generally not used.
+    if request_.method == "POST":
+        # Not implemented.
+        return jsonify(None)
+
+    # RESTful API: Delete the element.
+    if request_.method == "DELETE":
+        #delete_address
+        return jsonify(None) # TODO: Implement this.
+
+    return jsonify(None)
 
 
 if __name__ == "__main__":
