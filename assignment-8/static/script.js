@@ -23,6 +23,110 @@ const filterSortOrderElement = document.getElementById("filter-sort-order");
 const filterCriteriaElement = document.getElementById("filter-criteria");
 
 
+/* RESTful API:
+ *   GET    ~> get_user_addresses
+ *   POST   ~> insert_address
+ *   PUT    ~> update_address
+ *   DELETE ~> delete_address
+ *
+ *   GET /addresses:
+ *     body:     N/A
+ *     response: json[list[dict[str, str | int | None]]] | json[None]
+ *   POST /addresses:
+ *     body:     json[dict[str, str | None]]
+ *     response: json[int] | json[None]
+ *   PUT /addresses/<addressid>:
+ *     body:     json[dict[str, str | None]]
+ *     response: json[int] | json[None]
+ *   DELETE /addresses/<addressid>:
+ *     body:     Any
+ *     response: json[int] | json[None]
+ */
+
+
+/* GET /addresses:
+ *   body:     N/A
+ *   response: json[list[dict[str, str | int | None]]] | json[None]
+ */
+async function getUserAddresses() {
+  const response = await fetch(
+    "/addresses",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  return response.json();
+}
+
+
+/* POST /addresses:
+ *   body:     json[dict[str, str | None]]
+ *   response: json[int] | json[None]
+ */
+async function insertAddress(name, email = null, tel = null) {
+  const response = await fetch(
+    "/addresses",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "name": name,
+        "email": email,
+        "tel": tel,
+      }),
+    },
+  );
+  return response.json();
+}
+
+
+/* PUT /addresses/<addressid>:
+ *   body:     json[dict[str, str | None]]
+ *   response: json[int] | json[None]
+ */
+async function updateAddress(addressid, name, email = null, tel = null) {
+  const response = await fetch(
+    `/addresses/${addressid}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "name": name,
+        "email": email,
+        "tel": tel,
+      }),
+    },
+  );
+  return response.json();
+}
+
+
+/* DELETE /addresses/<addressid>:
+ *   body:     Any
+ *   response: json[int] | json[None]
+ */
+async function deleteAddress(addressid) {
+  const response = await fetch(
+    `/addresses/${addressid}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(null),
+    },
+  );
+  return response.json();
+}
+
+
 function formValidation(formData) {
   const dataObject = Object.fromEntries(formData);
   const name_ = dataObject["name"];
@@ -85,8 +189,17 @@ class Settings {
 
 
 class AddressEntry {
-  constructor(formData, buttonModify, buttonDelete) {
+  constructor(
+      addressId,
+      addressName,
+      addressEmail,
+      addressTel,
+      buttonModify,
+      buttonDelete,
+  ) {
     this.hidden = true;
+
+    this.addressId = addressId;
 
     this.div = document.createElement("div");
     this.div.setAttribute("class", "address-entry");
@@ -106,7 +219,7 @@ class AddressEntry {
     this.buttonModify = buttonModify;
     this.buttonDelete = buttonDelete;
 
-    this.rebuild(formData);
+    this.rebuild(addressName, addressEmail, addressTel);
   }
 
   // Example: console.log(this.toHumanReadable());
@@ -117,11 +230,10 @@ class AddressEntry {
            `email: "${this.email}"`;
   }
 
-  rebuild(formData) {
-    const dataObject = Object.fromEntries(formData);
-    this.name_ = dataObject["name"];
-    this.telephone = dataObject["telephone"];
-    this.email = dataObject["email"];
+  rebuild(addressName, addressEmail, addressTel) {
+    this.name_ = addressName;
+    this.telephone = addressTel;
+    this.email = addressEmail;
 
     this.nameElement.textContent = this.name_;
     this.telephoneElement.textContent = this.telephone;
@@ -364,6 +476,9 @@ class ModifyEntryHandler {
           for (const addressEntry of this.parent.stuff) {
             if (addressEntry.div === event.target.parentElement) {
               this.owner = addressEntry;
+              this.form.name.value = addressEntry.name_;
+              this.form.telephone.value = addressEntry.telephone;
+              this.form.email.value = addressEntry.email;
               this.div.style.display = "block";
               break;
             }
@@ -531,7 +646,7 @@ class AddressBook {
 
     this.div = divMainContentElement;
 
-    this.stuff = [];
+    this.stuff = []; // Address entries.
   }
 
   // Example: console.log(this.toHumanReadable());
@@ -552,32 +667,84 @@ class AddressBook {
     return null;
   }
 
+  clearEntries() {
+    while (this.stuff.length) {
+      this.stuff.pop();
+    }
+  }
+
+  reloadEntries() {
+    getUserAddresses().then((addresses) => {
+      if (addresses !== null) {
+        this.clearEntries()
+        for (const address of addresses) {
+          const addressId = address["id"];
+          const addressName = address["name"];
+          const addressEmail = address["email"];
+          const addressTel = address["tel"];
+          const buttonModify = this.modifyEntryHandler.newButton();
+          const buttonDelete = this.deleteEntryHandler.newButton();
+          const addressEntry = new AddressEntry(
+            addressId,
+            addressName,
+            addressEmail,
+            addressTel,
+            buttonModify,
+            buttonDelete,
+          );
+          this.stuff.push(addressEntry);
+        }
+        this.sortEntries();
+      }
+    });
+  }
+
   addEntry(formData) {
-    const buttonModify = this.modifyEntryHandler.newButton();
-    const buttonDelete = this.deleteEntryHandler.newButton();
+    const dataObject = Object.fromEntries(formData);
+    const formName = dataObject["name"];
+    const formEmail = dataObject["email"];
+    const formTel = dataObject["telephone"];
 
-    const addressEntry = new AddressEntry(formData, buttonModify, buttonDelete);
-    this.stuff.push(addressEntry);
-
-    this.sortEntries();
+    insertAddress(formName, formEmail, formTel).then((addressid) => {
+      if (addressid !== null) {
+        this.reloadEntries();
+      }
+    });
   }
 
   modifyEntry(addressEntry, formData) {
-    addressEntry.rebuild(formData);
+    const dataObject = Object.fromEntries(formData);
+    const formName = dataObject["name"];
+    const formEmail = dataObject["email"];
+    const formTel = dataObject["telephone"];
 
-    this.sortEntries();
+    updateAddress(
+      addressEntry.addressId,
+      formName,
+      formEmail,
+      formTel,
+    ).then((success) => {
+      if (success !== null) {
+        this.reloadEntries();
+      }
+    });
   }
 
   deleteEntry(addressEntry) {
-    if (Array.isArray(this.stuff) && this.stuff.length > 0) {
-      for (const [index, item] of this.stuff.entries()) {
-        if (item === addressEntry) {
-          this.stuff.splice(index, 1);
-          break;
+    deleteAddress(addressEntry.addressId).then((success) => {
+      if (success !== null) {
+        //this.reloadEntries();
+        if (Array.isArray(this.stuff) && this.stuff.length > 0) {
+          for (const [index, item] of this.stuff.entries()) {
+            if (item === addressEntry) {
+              this.stuff.splice(index, 1);
+              break;
+            }
+          }
         }
+        this.showEntries();
       }
-    }
-    this.show();
+    });
   }
 
   filterEntries() {
@@ -589,7 +756,7 @@ class AddressBook {
         addressEntry.filterCompare(filterSearch, filterCriteria);
       }
     }
-    this.show();
+    this.showEntries();
   }
 
   sortEntries() {
@@ -624,7 +791,7 @@ class AddressBook {
     this.filterEntries();
   }
 
-  show() {
+  showEntries() {
     while (this.div.firstChild) {
       this.div.removeChild(this.div.firstChild);
     }
@@ -639,58 +806,5 @@ class AddressBook {
 }
 
 const addressBook = new AddressBook();
-
-// Some sample initial formData.
-// NOTE: One of the AddressEntry below should be invalid.
-let formData;
-
-formData = new FormData();
-formData.append("name", "Zx Cv");
-formData.append("telephone", "47888888");
-formData.append("email", "zx.cv@test.com");
-if (formValidation(formData)) {
-  addressBook.addEntry(formData);
-} else {
-  console.log("Invalid sample initial formData: ", formData);
-}
-
-formData = new FormData();
-formData.append("name", "As Df");
-formData.append("telephone", "92444444");
-formData.append("email", "as.df@test.com");
-if (formValidation(formData)) {
-  addressBook.addEntry(formData);
-} else {
-  console.log("Invalid sample initial formData: ", formData);
-}
-
-formData = new FormData();
-formData.append("name", "Qw Er");
-formData.append("telephone", "47555555");
-formData.append("email", "qw.er@test.com");
-if (formValidation(formData)) {
-  addressBook.addEntry(formData);
-} else {
-  console.log("Invalid sample initial formData: ", formData);
-}
-
-formData = new FormData();
-formData.append("name", "Gh Jk");
-formData.append("telephone", "92111111");
-formData.append("email", "gh.jk@test.com");
-if (formValidation(formData)) {
-  addressBook.addEntry(formData);
-} else {
-  console.log("Invalid sample initial formData: ", formData);
-}
-
-formData = new FormData();
-formData.append("name", "Ty Ui");
-formData.append("telephone", "47222222");
-formData.append("email", "@INVALID.COM");
-if (formValidation(formData)) {
-  addressBook.addEntry(formData);
-} else {
-  console.log("Invalid sample initial formData: ", formData);
-}
+addressBook.reloadEntries();
 

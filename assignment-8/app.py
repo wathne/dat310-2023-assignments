@@ -1,4 +1,23 @@
 """Flask app.
+
+RESTful API:
+    GET    ~> get_user_addresses
+    POST   ~> insert_address
+    PUT    ~> update_address
+    DELETE ~> delete_address
+
+    GET /addresses:
+        body:     N/A
+        response: json[list[dict[str, str | int | None]]] | json[None]
+    POST /addresses:
+        body:     json[dict[str, str | None]]
+        response: json[int] | json[None]
+    PUT /addresses/<addressid>:
+        body:     json[dict[str, str | None]]
+        response: json[int] | json[None]
+    DELETE /addresses/<addressid>:
+        body:     Any
+        response: json[int] | json[None]
 """
 
 #from flask import current_app # current_app is a LocalProxy.
@@ -164,7 +183,7 @@ def before_request() -> WerkzeugResponse | Response | tuple[str, int] | None:
     return None
 
 
-@app.route("/user_info")
+@app.route(rule="/user_info")
 def user_info() -> tuple[str, int]:
     # pylint: disable=protected-access
     scs: SCS = cast(LP[SCS], session)._get_current_object()
@@ -177,7 +196,7 @@ def user_info() -> tuple[str, int]:
     ), 200)
 
 
-@app.route("/clear_user")
+@app.route(rule="/clear_user")
 def clear_user() -> WerkzeugResponse | Response:
     # pylint: disable=protected-access
     scs: SCS = cast(LP[SCS], session)._get_current_object()
@@ -191,7 +210,7 @@ def clear_user() -> WerkzeugResponse | Response:
     )
 
 
-@app.route("/session_info")
+@app.route(rule="/session_info")
 def session_info() -> tuple[str, int]:
     # pylint: disable=protected-access
     scs: SCS = cast(LP[SCS], session)._get_current_object()
@@ -201,7 +220,7 @@ def session_info() -> tuple[str, int]:
     ), 200)
 
 
-@app.route("/clear_session")
+@app.route(rule="/clear_session")
 def clear_session() -> WerkzeugResponse | Response:
     # pylint: disable=protected-access
     scs: SCS = cast(LP[SCS], session)._get_current_object()
@@ -214,7 +233,7 @@ def clear_session() -> WerkzeugResponse | Response:
     )
 
 
-@app.route("/test")
+@app.route(rule="/test")
 def test() -> tuple[str, int]:
     # pylint: disable=protected-access
     return (render_template(
@@ -222,8 +241,8 @@ def test() -> tuple[str, int]:
     ), 200)
 
 
-@app.route("/")
-@app.route("/index")
+@app.route(rule="/")
+@app.route(rule="/index")
 def index() -> WerkzeugResponse | Response:
     # pylint: disable=protected-access
     acg: ACG = cast(LP[ACG], g)._get_current_object()
@@ -238,7 +257,7 @@ def index() -> WerkzeugResponse | Response:
     )
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route(rule="/login", methods=["GET", "POST"])
 def login() -> tuple[str, int]:
     # pylint: disable=protected-access
     acg: ACG = cast(LP[ACG], g)._get_current_object()
@@ -282,7 +301,7 @@ def login() -> tuple[str, int]:
 
 
 @app.route(
-    "/addresses",
+    rule="/addresses",
     methods=["GET", "PUT", "POST", "DELETE"],
 )
 def addresses() -> Response:
@@ -296,9 +315,26 @@ def addresses() -> Response:
     if acg.user is None:
         return jsonify(None)
 
+    request_dict: dict[str, str | None] | None = None
+    request_dict_name: str | None = None
+    request_dict_email: str | None = None
+    request_dict_tel: str | None = None
+    if request_.is_json:
+        request_dict = request_.get_json(force=False, silent=True, cache=True)
+        print(f"request_dict: {request_dict}") # TODO: Delete this.
+    if isinstance(request_dict, dict):
+        request_dict_name = request_dict.get("name", None)
+        request_dict_email = request_dict.get("email", None)
+        request_dict_tel = request_dict.get("tel", None)
+        print(f"request_dict['name']: {request_dict['name']}") # TODO: Delete.
+        print(f"request_dict['email']: {request_dict['email']}") # TODO: Delete.
+        print(f"request_dict['tel']: {request_dict['tel']}") # TODO: Delete.
+
+    db_user_addresses: list[dict[str, str | int | None]] | None = None
+    db_new_addressid: int = -1
+
     # RESTful API: List elements.
     if request_.method == "GET":
-        db_user_addresses: list[dict[str, str | int | None]] | None = None
         try:
             db_user_addresses = get_user_addresses(
                 conn=db_con,
@@ -318,39 +354,22 @@ def addresses() -> Response:
 
     # RESTful API: Create a new element in the collection.
     if request_.method == "POST":
-        form_name = request_.form.get(
-            key="name",
-            default=None,
-            type=str,
-        )
-        form_email = request_.form.get(
-            key="email",
-            default=None,
-            type=str,
-        )
-        form_tel = request_.form.get(
-            key="tel",
-            default=None,
-            type=str,
-        )
-        if form_name is None:
+        if request_dict_name is None:
             return jsonify(None)
-
-        db_address_id: int = -1
         try:
-            db_address_id = insert_address(
+            db_new_addressid = insert_address(
                 conn=db_con,
-                name=form_name,
-                email=form_email,
-                tel=form_tel,
+                name=request_dict_name,
+                email=request_dict_email,
+                tel=request_dict_tel,
                 userid=acg.user,
             )
         except AnySqlite3Error as err:
             print(err)
             return jsonify(None)
-        if db_address_id == -1:
+        if db_new_addressid == -1:
             return jsonify(None)
-        return jsonify(db_address_id)
+        return jsonify(db_new_addressid)
 
     # RESTful API: Delete the entire collection.
     if request_.method == "DELETE":
@@ -361,7 +380,7 @@ def addresses() -> Response:
 
 
 @app.route(
-    "/addresses/<int:addressid>",
+    rule="/addresses/<int:addressid>",
     methods=["GET", "PUT", "POST", "DELETE"],
 )
 def address(addressid: int | None = None) -> Response:
@@ -372,11 +391,29 @@ def address(addressid: int | None = None) -> Response:
     if db_con is None:
         return jsonify(None)
 
+    if acg.user is None:
+        return jsonify(None)
+
     if addressid is None:
         return jsonify(None)
 
-    if acg.user is None:
-        return jsonify(None)
+    request_dict: dict[str, str | None] | None = None
+    request_dict_name: str | None = None
+    request_dict_email: str | None = None
+    request_dict_tel: str | None = None
+    if request_.is_json:
+        request_dict = request_.get_json(force=False, silent=True, cache=True)
+        print(f"request_dict: {request_dict}") # TODO: Delete this.
+    if isinstance(request_dict, dict):
+        request_dict_name = request_dict.get("name", None)
+        request_dict_email = request_dict.get("email", None)
+        request_dict_tel = request_dict.get("tel", None)
+        print(f"request_dict['name']: {request_dict['name']}") # TODO: Delete.
+        print(f"request_dict['email']: {request_dict['email']}") # TODO: Delete.
+        print(f"request_dict['tel']: {request_dict['tel']}") # TODO: Delete.
+
+    db_update_address_success: int = 0
+    db_delete_address_success: int = 0
 
     # RESTful API: Retrieve the representation of an element.
     if request_.method == "GET":
@@ -385,8 +422,25 @@ def address(addressid: int | None = None) -> Response:
 
     # RESTful API: Replace element, create if it doesn't exist.
     if request_.method == "PUT":
-        #update_address
-        return jsonify(None) # TODO: Implement this.
+        if request_dict_name is None:
+            return jsonify(None)
+        try:
+            db_update_address_success = update_address(
+                conn=db_con,
+                address={
+                    "name": request_dict_name,
+                    "email": request_dict_email,
+                    "tel": request_dict_tel,
+                    "id": addressid,
+                },
+                userid=acg.user,
+            )
+        except AnySqlite3Error as err:
+            print(err)
+            return jsonify(None)
+        if db_update_address_success == 0:
+            return jsonify(None)
+        return jsonify(db_update_address_success)
 
     # RESTful API: Generally not used.
     if request_.method == "POST":
@@ -395,8 +449,18 @@ def address(addressid: int | None = None) -> Response:
 
     # RESTful API: Delete the element.
     if request_.method == "DELETE":
-        #delete_address
-        return jsonify(None) # TODO: Implement this.
+        try:
+            db_delete_address_success = delete_address(
+                conn=db_con,
+                addressid=addressid,
+                userid=acg.user,
+            )
+        except AnySqlite3Error as err:
+            print(err)
+            return jsonify(None)
+        if db_delete_address_success == 0:
+            return jsonify(None)
+        return jsonify(db_delete_address_success)
 
     return jsonify(None)
 
