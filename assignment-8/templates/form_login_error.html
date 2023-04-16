@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block main %}
+  <p></p>
+  <p>
+    <a href="{{ url_for('login_deprecated') }}">login (deprecated)</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('user_info') }}">user info</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('session_info') }}">session info</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('index') }}">index</a>
+  </p>
+  <p></p>
+  <form action="/login_deprecated" method="post">
+    <p>
+      <input
+          name="username"
+          placeholder="enter username"
+          required
+          type="text">
+    </p>
+    <p>
+      <input
+          name="password"
+          placeholder="enter password"
+          required
+          type="password">
+    </p>
+    <p>
+      <input
+          type="submit"
+          value="Login">
+    </p>
+  </form>
+  <p></p>
+  <p>login error</p>
+  <p></p>
+  <p>sample login credentials:</p>
+  <p>johndoe/Joe123</p>
+  <p>maryjane/LoveDogs</p>
+  <p></p>
+{% endblock %}

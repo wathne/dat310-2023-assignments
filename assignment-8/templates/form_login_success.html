@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block main %}
+  <p></p>
+  <p>
+    <a href="{{ url_for('login_deprecated') }}">login (deprecated)</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('user_info') }}">user info</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('session_info') }}">session info</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('index') }}">index</a> &#8678; click here
+  </p>
+  <p></p>
+  <p>login success</p>
+  <p></p>
+  <p>g.user: "{{ g.user }}"</p>
+  <p></p>
+{% endblock %}

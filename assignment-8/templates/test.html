@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block main %}
+  <p></p>
+  <p>
+    <a href="{{ url_for('login_deprecated') }}">login (deprecated)</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('user_info') }}">user info</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('session_info') }}">session info</a>
+  </p>
+  <p></p>
+  <p>
+    <a href="{{ url_for('index') }}">index</a>
+  </p>
+  <p></p>
+  <p>g.user: "{{ g.user }}"</p>
+  <p></p>
+  <form action="/addresses" method="get">
+    <p>
+      <input
+          type=submit
+          value="/addresses [GET]">
+    </p>
+  </form>
+  <p></p>
+{% endblock %}
