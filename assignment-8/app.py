@@ -1,5 +1,13 @@
 """Flask app.
 
+Session API:
+    POST /login:
+        body:     json[dict[str, str | None]]
+        response: json[int] | json[None]
+    POST /logout:
+        body:     Any
+        response: json[int] | json[None]
+
 RESTful API:
     GET    ~> get_user_addresses
     POST   ~> insert_address
@@ -18,6 +26,15 @@ RESTful API:
     DELETE /addresses/<addressid>:
         body:     Any
         response: json[int] | json[None]
+
+Obsolete or testing, please ignore:
+- /templates directory
+- app.user_info()           - "/user_info"
+- app.clear_user()          - "/clear_user"
+- app.session_info()        - "/session_info"
+- app.clear_session()       - "/clear_session"
+- app.test()                - "/test"
+- app.login_deprecated()    - "/login_deprecated"
 """
 
 #from flask import current_app # current_app is a LocalProxy.
@@ -138,51 +155,36 @@ def load_user() -> None:
 
 
 @app.before_request
-def before_request() -> WerkzeugResponse | Response | tuple[str, int] | None:
+def before_request() -> None:
     # pylint: disable=protected-access
-    acg: ACG = cast(LP[ACG], g)._get_current_object()
     request_: Request = cast(LP[Request], request)._get_current_object()
     db_con: Connection | None = get_database_connection()
 
-    print(f"request_.endpoint: {request_.endpoint}") # TODO: Delete this.
-    print(request_) # TODO: Delete this.
-
     if request_.endpoint == "static":
-        #return None
         pass # TODO: Skip load_user() if style.css.
+        #return None
 
     # Do not call load_user() if endpoint is in whitelist.
     whitelist: set[str] = {
         "login",
-        "user_info",
-        "clear_user",
-        "session_info",
-        "clear_session",
+        "login_deprecated",
     }
     if request_.endpoint in whitelist:
-        print(f"{request_.endpoint} is on whitelist") # TODO: Delete this.
+        print(f"{request_.endpoint} is in whitelist") # TODO: Delete.
         return None
 
     if db_con is None:
-        return ("No database connection.", 500)
+        return None
 
     try:
         load_user()
     except AnySqlite3Error as err:
         print(err)
-        pass # TODO: Do something here?
-
-    if acg.user is None:
-        return redirect(
-            location=url_for(
-                endpoint="login",
-            ),
-            code=302,
-        )
 
     return None
 
 
+# Obsolete or testing, please ignore.
 @app.route(rule="/user_info")
 def user_info() -> tuple[str, int]:
     # pylint: disable=protected-access
@@ -196,6 +198,7 @@ def user_info() -> tuple[str, int]:
     ), 200)
 
 
+# Obsolete or testing, please ignore.
 @app.route(rule="/clear_user")
 def clear_user() -> WerkzeugResponse | Response:
     # pylint: disable=protected-access
@@ -210,6 +213,7 @@ def clear_user() -> WerkzeugResponse | Response:
     )
 
 
+# Obsolete or testing, please ignore.
 @app.route(rule="/session_info")
 def session_info() -> tuple[str, int]:
     # pylint: disable=protected-access
@@ -220,6 +224,7 @@ def session_info() -> tuple[str, int]:
     ), 200)
 
 
+# Obsolete or testing, please ignore.
 @app.route(rule="/clear_session")
 def clear_session() -> WerkzeugResponse | Response:
     # pylint: disable=protected-access
@@ -233,9 +238,9 @@ def clear_session() -> WerkzeugResponse | Response:
     )
 
 
+# Obsolete or testing, please ignore.
 @app.route(rule="/test")
 def test() -> tuple[str, int]:
-    # pylint: disable=protected-access
     return (render_template(
         template_name_or_list="test.html",
     ), 200)
@@ -246,7 +251,7 @@ def test() -> tuple[str, int]:
 def index() -> WerkzeugResponse | Response:
     # pylint: disable=protected-access
     acg: ACG = cast(LP[ACG], g)._get_current_object()
-    print(f"acg.user: {acg.user}") # TODO: Delete this.
+    print(f"acg.user: {acg.user}") # TODO: Delete.
 
     return redirect(
         location=url_for(
@@ -257,8 +262,12 @@ def index() -> WerkzeugResponse | Response:
     )
 
 
-@app.route(rule="/login", methods=["GET", "POST"])
-def login() -> tuple[str, int]:
+# Obsolete or testing, please ignore.
+@app.route(
+    rule="/login_deprecated",
+    methods=["GET", "POST"],
+)
+def login_deprecated() -> tuple[str, int]:
     # pylint: disable=protected-access
     acg: ACG = cast(LP[ACG], g)._get_current_object()
     request_: Request = cast(LP[Request], request)._get_current_object()
@@ -284,7 +293,6 @@ def login() -> tuple[str, int]:
             load_user()
         except AnySqlite3Error as err:
             print(err)
-            pass # TODO: Do something here?
 
         if acg.user is None:
             return (render_template(
@@ -301,6 +309,66 @@ def login() -> tuple[str, int]:
 
 
 @app.route(
+    rule="/login",
+    methods=["POST"],
+)
+def login() -> Response:
+    # pylint: disable=protected-access
+    acg: ACG = cast(LP[ACG], g)._get_current_object()
+    request_: Request = cast(LP[Request], request)._get_current_object()
+    scs: SCS = cast(LP[SCS], session)._get_current_object()
+    db_con: Connection | None = get_database_connection()
+
+    request_dict: dict[str, str | None] | None = None
+    request_dict_username: str | None = None
+    request_dict_password: str | None = None
+
+    if request_.is_json:
+        request_dict = request_.get_json(force=False, silent=True, cache=False)
+        print(f"request_dict: {request_dict}") # TODO: Delete.
+    if isinstance(request_dict, dict):
+        request_dict_username = request_dict.get("username", None)
+        request_dict_password = request_dict.get("password", None)
+        print(f"request_dict['username']: {request_dict['username']}") # TODO: Delete.
+        print(f"request_dict['password']: {request_dict['password']}") # TODO: Delete.
+
+    scs["username"] = request_dict_username
+    scs["password"] = request_dict_password
+
+    if db_con is None:
+        return jsonify(None)
+
+    try:
+        load_user()
+    except AnySqlite3Error as err:
+        print(err)
+
+    if acg.user is None:
+        return jsonify(None)
+
+    return jsonify(acg.user)
+
+
+@app.route(
+    rule="/logout",
+    methods=["POST"],
+)
+def logout() -> Response:
+    # pylint: disable=protected-access
+    acg: ACG = cast(LP[ACG], g)._get_current_object()
+    scs: SCS = cast(LP[SCS], session)._get_current_object()
+    scs.pop(key="username", default=None)
+    scs.pop(key="password", default=None)
+
+    print(f"acg.user: {acg.user}") # TODO: Delete.
+
+    if acg.user is None:
+        return jsonify(None)
+
+    return jsonify(acg.user)
+
+
+@app.route(
     rule="/addresses",
     methods=["GET", "PUT", "POST", "DELETE"],
 )
@@ -309,19 +377,14 @@ def addresses() -> Response:
     acg: ACG = cast(LP[ACG], g)._get_current_object()
     request_: Request = cast(LP[Request], request)._get_current_object()
     db_con: Connection | None = get_database_connection()
-    if db_con is None:
-        return jsonify(None)
-
-    if acg.user is None:
-        return jsonify(None)
 
     request_dict: dict[str, str | None] | None = None
     request_dict_name: str | None = None
     request_dict_email: str | None = None
     request_dict_tel: str | None = None
     if request_.is_json:
-        request_dict = request_.get_json(force=False, silent=True, cache=True)
-        print(f"request_dict: {request_dict}") # TODO: Delete this.
+        request_dict = request_.get_json(force=False, silent=True, cache=False)
+        print(f"request_dict: {request_dict}") # TODO: Delete.
     if isinstance(request_dict, dict):
         request_dict_name = request_dict.get("name", None)
         request_dict_email = request_dict.get("email", None)
@@ -330,6 +393,11 @@ def addresses() -> Response:
         print(f"request_dict['email']: {request_dict['email']}") # TODO: Delete.
         print(f"request_dict['tel']: {request_dict['tel']}") # TODO: Delete.
 
+    if acg.user is None:
+        return jsonify(None)
+
+    if db_con is None:
+        return jsonify(None)
     db_user_addresses: list[dict[str, str | int | None]] | None = None
     db_new_addressid: int = -1
 
@@ -388,11 +456,6 @@ def address(addressid: int | None = None) -> Response:
     acg: ACG = cast(LP[ACG], g)._get_current_object()
     request_: Request = cast(LP[Request], request)._get_current_object()
     db_con: Connection | None = get_database_connection()
-    if db_con is None:
-        return jsonify(None)
-
-    if acg.user is None:
-        return jsonify(None)
 
     if addressid is None:
         return jsonify(None)
@@ -402,8 +465,8 @@ def address(addressid: int | None = None) -> Response:
     request_dict_email: str | None = None
     request_dict_tel: str | None = None
     if request_.is_json:
-        request_dict = request_.get_json(force=False, silent=True, cache=True)
-        print(f"request_dict: {request_dict}") # TODO: Delete this.
+        request_dict = request_.get_json(force=False, silent=True, cache=False)
+        print(f"request_dict: {request_dict}") # TODO: Delete.
     if isinstance(request_dict, dict):
         request_dict_name = request_dict.get("name", None)
         request_dict_email = request_dict.get("email", None)
@@ -412,6 +475,11 @@ def address(addressid: int | None = None) -> Response:
         print(f"request_dict['email']: {request_dict['email']}") # TODO: Delete.
         print(f"request_dict['tel']: {request_dict['tel']}") # TODO: Delete.
 
+    if acg.user is None:
+        return jsonify(None)
+
+    if db_con is None:
+        return jsonify(None)
     db_update_address_success: int = 0
     db_delete_address_success: int = 0
 

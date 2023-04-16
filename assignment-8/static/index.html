@@ -21,10 +21,11 @@
       </select>
     </div>
     <div class="flex-right-aligned">
-      <a href="/login">login</a>|
       <a href="/user_info">user info</a>
       <button class="button-add-entry">Add entry</button>
       <button class="button-settings">Settings</button>
+      <button class="button-login">Login</button>
+      <button class="button-logout">Logout</button>
     </div>
   </header>
   <main class="flex-main">
@@ -116,6 +117,42 @@
           </br>
           <input type="submit" value="Change">
         </form>
+      </div>
+      <div id="login" class="default-hidden framed">
+        <h3>Login</h3>
+        <button class="button-cancel">Cancel</button>
+        <form id="form-login">
+          <p>
+            <input
+              name="username"
+              placeholder="enter username"
+              required
+              type="text">
+          </p>
+          <p>
+            <input
+              name="password"
+              placeholder="enter password"
+              required
+              type="password">
+          </p>
+          <p>
+            <input
+              type="submit"
+              value="Login">
+          </p>
+        </form>
+        <p></p>
+        <p>Sample login credentials:</p>
+        <p>johndoe/Joe123</p>
+        <p>maryjane/LoveDogs</p>
+      </div>
+      <div id="logout" class="default-hidden framed">
+        <h3>Do you want to logout?</h3>
+        <form id="form-logout">
+          <input type="submit" value="Yes">
+        </form>
+        <button class="button-cancel">No</button>
       </div>
     </div>
     <div id="main-content" class="flex-main-content framed">

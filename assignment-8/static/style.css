@@ -86,6 +86,14 @@
   margin: 0px 3px 0px 3px;
 }
 
+.button-login {
+  margin: 0px 3px 0px 3px;
+}
+
+.button-logout {
+  margin: 0px 3px 0px 3px;
+}
+
 .button-cancel {
 }
 
@@ -154,6 +162,18 @@ main #settings {
 }
 
 main #form-settings {
+}
+
+main #login {
+}
+
+main #form-login {
+}
+
+main #logout {
+}
+
+main #form-logout {
 }
 
 main #main-content {

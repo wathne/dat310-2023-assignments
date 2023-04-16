@@ -4,6 +4,8 @@ const buttonAddEntryElements = document.getElementsByClassName("button-add-entry
 const buttonModifyEntryElements = document.getElementsByClassName("button-modify-entry");
 const buttonDeleteEntryElements = document.getElementsByClassName("button-delete-entry");
 const buttonSettingsElements = document.getElementsByClassName("button-settings");
+const buttonLoginElements = document.getElementsByClassName("button-login");
+const buttonLogoutElements = document.getElementsByClassName("button-logout");
 const buttonCancelElements = document.getElementsByClassName("button-cancel");
 
 const divMainExtraElement = document.getElementById("main-extra");
@@ -11,16 +13,30 @@ const divAddEntryElement = document.getElementById("add-entry");
 const divModifyEntryElement = document.getElementById("modify-entry");
 const divDeleteEntryElement = document.getElementById("delete-entry");
 const divSettingsElement = document.getElementById("settings");
+const divLoginElement = document.getElementById("login");
+const divLogoutElement = document.getElementById("logout");
 const divMainContentElement = document.getElementById("main-content");
 
 const formAddEntryElement = document.getElementById("form-add-entry");
 const formModifyEntryElement = document.getElementById("form-modify-entry");
 const formDeleteEntryElement = document.getElementById("form-delete-entry");
 const formSettingsElement = document.getElementById("form-settings");
+const formLoginElement = document.getElementById("form-login");
+const formLogoutElement = document.getElementById("form-logout");
 
 const filterSearchElement = document.getElementById("filter-search");
 const filterSortOrderElement = document.getElementById("filter-sort-order");
 const filterCriteriaElement = document.getElementById("filter-criteria");
+
+
+/* Session API:
+ *   POST /login:
+ *     body:     json[dict[str, str | None]]
+ *     response: json[int] | json[None]
+ *   POST /logout:
+ *     body:     Any
+ *     response: json[int] | json[None]
+ */
 
 
 /* RESTful API:
@@ -42,6 +58,47 @@ const filterCriteriaElement = document.getElementById("filter-criteria");
  *     body:     Any
  *     response: json[int] | json[None]
  */
+
+
+/* POST /login:
+ *   body:     json[dict[str, str | None]]
+ *   response: json[int] | json[None]
+ */
+async function sessionLogin(username, password) {
+  const response = await fetch(
+    "/login",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "username": username,
+        "password": password,
+      }),
+    },
+  );
+  return response.json();
+}
+
+
+/* POST /logout:
+ *   body:     Any
+ *   response: json[int] | json[None]
+ */
+async function sessionLogout() {
+  const response = await fetch(
+    "/logout",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(null),
+    },
+  );
+  return response.json();
+}
 
 
 /* GET /addresses:
@@ -184,6 +241,21 @@ class Settings {
            `font: "${this.font}", ` +
            `size: "${this.size_}", ` +
            `color: "${this.color}"`;
+  }
+}
+
+
+class Login {
+  constructor() {
+    this.username = null;
+    this.password = null;
+  }
+
+  // Example: console.log(this.toHumanReadable());
+  toHumanReadable() {
+    return `[Login] ` +
+           `username: "${this.username}", ` +
+           `password: "${this.password}"`;
   }
 }
 
@@ -636,6 +708,131 @@ class SettingsHandler {
 }
 
 
+class LoginHandler {
+  constructor(parent) {
+    // See implementation of handleEvent(event).
+    this.parent = parent;
+
+    this.login = new Login();
+
+    this.div = divLoginElement;
+    this.form = formLoginElement;
+    this.buttonStart = [];
+    for (const element of buttonLoginElements) {
+        this.buttonStart.push(element);
+    }
+    this.buttonCancel = [];
+    for (const element of buttonCancelElements) {
+      if (element.parentElement === this.div) {
+        this.buttonCancel.push(element);
+      }
+    }
+
+    this.form.onsubmit = (event) => {return false;};
+    this.form.addEventListener("submit", this);
+    for (const element of this.buttonStart) {
+      element.addEventListener("click", this);
+    }
+    for (const element of this.buttonCancel) {
+      element.addEventListener("click", this);
+    }
+  }
+
+  handleEvent(event) {
+    if (event.target === this.form) {
+      if (event.type === "submit") {
+        const formData = new FormData(this.form);
+        const dataObject = Object.fromEntries(formData);
+        this.login.username = dataObject["username"];
+        this.login.password = dataObject["password"];
+        console.log(this.login.toHumanReadable()); // TODO: Delete.
+        this.parent.login().then((success) => {
+          if (success) {
+            this.div.style.display = "none";
+          } else {
+            // TODO: Message about login failure.
+            console.log("TODO: Message about login failure.");
+          }
+        });
+      }
+    }
+    for (const element of this.buttonStart) {
+      if (event.target === element) {
+        if (event.type === "click") {
+          this.div.style.display = "block";
+        }
+      }
+    }
+    for (const element of this.buttonCancel) {
+      if (event.target === element) {
+        if (event.type === "click") {
+          this.div.style.display = "none";
+        }
+      }
+    }
+  }
+}
+
+
+class LogoutHandler {
+  constructor(parent) {
+    // See implementation of handleEvent(event).
+    this.parent = parent;
+
+    this.div = divLogoutElement;
+    this.form = formLogoutElement;
+    this.buttonStart = [];
+    for (const element of buttonLogoutElements) {
+        this.buttonStart.push(element);
+    }
+    this.buttonCancel = [];
+    for (const element of buttonCancelElements) {
+      if (element.parentElement === this.div) {
+        this.buttonCancel.push(element);
+      }
+    }
+
+    this.form.onsubmit = (event) => {return false;};
+    this.form.addEventListener("submit", this);
+    for (const element of this.buttonStart) {
+      element.addEventListener("click", this);
+    }
+    for (const element of this.buttonCancel) {
+      element.addEventListener("click", this);
+    }
+  }
+
+  handleEvent(event) {
+    if (event.target === this.form) {
+      if (event.type === "submit") {
+        this.parent.logout().then((success) => {
+          if (success) {
+            this.div.style.display = "none";
+          } else {
+            // TODO: Message about logout failure.
+            console.log("TODO: Message about logout failure.");
+          }
+        });
+      }
+    }
+    for (const element of this.buttonStart) {
+      if (event.target === element) {
+        if (event.type === "click") {
+          this.div.style.display = "block";
+        }
+      }
+    }
+    for (const element of this.buttonCancel) {
+      if (event.target === element) {
+        if (event.type === "click") {
+          this.div.style.display = "none";
+        }
+      }
+    }
+  }
+}
+
+
 class AddressBook {
   constructor() {
     this.filterHandler = new FilterHandler(this);
@@ -643,6 +840,8 @@ class AddressBook {
     this.modifyEntryHandler = new ModifyEntryHandler(this);
     this.deleteEntryHandler = new DeleteEntryHandler(this);
     this.settingsHandler = new SettingsHandler(this);
+    this.loginHandler = new LoginHandler(this);
+    this.logoutHandler = new LogoutHandler(this);
 
     this.div = divMainContentElement;
 
@@ -658,6 +857,28 @@ class AddressBook {
     return humanReadableStuff.join("\n");
   }
 
+  async login() {
+    const username = this.loginHandler.login.username;
+    const password = this.loginHandler.login.password;
+    const userid = await sessionLogin(username, password);
+    console.log(`login userid: ${userid}`); // TODO: Delete.
+    this.reloadEntries();
+    if (userid !== null) {
+      return true;
+    }
+    return false;
+  }
+
+  async logout() {
+    const userid = await sessionLogout();
+    console.log(`logout userid: ${userid}`); // TODO: Delete.
+    this.reloadEntries();
+    if (userid !== null) {
+      return true;
+    }
+    return false;
+  }
+
   // NOTE: This function is not being used.
   getLastEntry() {
     if (Array.isArray(this.stuff) && this.stuff.length > 0) {
@@ -667,16 +888,13 @@ class AddressBook {
     return null;
   }
 
-  clearEntries() {
+  reloadEntries() {
+    console.log("reload entries"); // TODO: Delete.
     while (this.stuff.length) {
       this.stuff.pop();
     }
-  }
-
-  reloadEntries() {
     getUserAddresses().then((addresses) => {
       if (addresses !== null) {
-        this.clearEntries()
         for (const address of addresses) {
           const addressId = address["id"];
           const addressName = address["name"];
@@ -692,10 +910,11 @@ class AddressBook {
             buttonModify,
             buttonDelete,
           );
+          console.log(addressEntry.toHumanReadable()); // TODO: Delete.
           this.stuff.push(addressEntry);
         }
-        this.sortEntries();
       }
+      this.sortEntries();
     });
   }
 
@@ -723,16 +942,16 @@ class AddressBook {
       formName,
       formEmail,
       formTel,
-    ).then((success) => {
-      if (success !== null) {
+    ).then((response) => {
+      if (response !== null) {
         this.reloadEntries();
       }
     });
   }
 
   deleteEntry(addressEntry) {
-    deleteAddress(addressEntry.addressId).then((success) => {
-      if (success !== null) {
+    deleteAddress(addressEntry.addressId).then((response) => {
+      if (response !== null) {
         //this.reloadEntries();
         if (Array.isArray(this.stuff) && this.stuff.length > 0) {
           for (const [index, item] of this.stuff.entries()) {
@@ -748,6 +967,7 @@ class AddressBook {
   }
 
   filterEntries() {
+    console.log("filter entries"); // TODO: Delete.
     const filterSearch = this.filterHandler.getSearch();
     const filterCriteria = this.filterHandler.getCriteria();
 
@@ -760,6 +980,7 @@ class AddressBook {
   }
 
   sortEntries() {
+    console.log("sort entries"); // TODO: Delete.
     const filterSortOrder = this.filterHandler.getSortOrder();
     const filterCriteria = this.filterHandler.getCriteria();
 
@@ -792,6 +1013,7 @@ class AddressBook {
   }
 
   showEntries() {
+    console.log("show entries"); // TODO: Delete.
     while (this.div.firstChild) {
       this.div.removeChild(this.div.firstChild);
     }
