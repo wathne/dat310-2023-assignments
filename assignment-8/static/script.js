@@ -61,7 +61,7 @@ const filterCriteriaElement = document.getElementById("filter-criteria");
 
 
 /* POST /login:
- *   body:     json[dict[str, str | None]]
+ *   body:     json[dict[str, str]]
  *   response: json[int] | json[None]
  */
 async function sessionLogin(username, password) {
