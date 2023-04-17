@@ -1,14 +1,20 @@
 """Flask app.
 
+The REST API is stateless. No server side session data will survive a
+request context. The session API will let the client set a session
+username and password. The client will then include this session data
+in the cookie header of each request. A load_user() function will use
+the session data provided by the client to authenticate a userid.
+
 Session API:
     POST /login:
-        body:     json[dict[str, str | None]]
+        body:     json[dict[str, str]]
         response: json[int] | json[None]
     POST /logout:
         body:     Any
         response: json[int] | json[None]
 
-RESTful API:
+REST API:
     GET    ~> get_user_addresses
     POST   ~> insert_address
     PUT    ~> update_address
@@ -151,17 +157,24 @@ def before_request() -> None:
     request_: Request = cast(LP[Request], request)._get_current_object()
     db_con: Connection | None = get_database_connection()
 
-    if request_.endpoint == "static":
-        pass # TODO: Skip load_user() if style.css.
-        #return None
-
-    # Do not call load_user() if endpoint is in whitelist.
-    whitelist: set[str] = {
-        "login",
-        "login_deprecated",
+    # Do not call load_user() if endpoint is whitelisted.
+    endpoint_whitelist: set[str] = {
+        "index", # Authentication is not required.
+        "login", # login() will call load_user().
+        #"static", # See path_whitelist below.
     }
-    if request_.endpoint in whitelist:
-        print(f"{request_.endpoint} is in whitelist") # TODO: Delete.
+    if request_.endpoint in endpoint_whitelist:
+        print(f"{request_.endpoint} is whitelisted, bypassing load_user().")
+        return None
+
+    # Do not call load_user() if path is whitelisted.
+    path_whitelist: set[str] = {
+        "/static/index.html", # Authentication is not required.
+        "/static/script.js", # Authentication is not required.
+        "/static/style.css", # Authentication is not required.
+    }
+    if request_.path in path_whitelist:
+        print(f"{request_.path} is whitelisted, bypassing load_user().")
         return None
 
     if db_con is None:
@@ -178,10 +191,6 @@ def before_request() -> None:
 @app.route(rule="/")
 @app.route(rule="/index")
 def index() -> WerkzeugResponse | Response:
-    # pylint: disable=protected-access
-    acg: ACG = cast(LP[ACG], g)._get_current_object()
-    print(f"acg.user: {acg.user}") # TODO: Delete.
-
     return redirect(
         location=url_for(
             endpoint="static",
@@ -208,12 +217,9 @@ def login() -> Response:
 
     if request_.is_json:
         request_dict = request_.get_json(force=False, silent=True, cache=False)
-        print(f"request_dict: {request_dict}") # TODO: Delete.
     if isinstance(request_dict, dict):
         request_dict_username = request_dict.get("username", None)
         request_dict_password = request_dict.get("password", None)
-        print(f"request_dict['username']: {request_dict['username']}") # TODO: Delete.
-        print(f"request_dict['password']: {request_dict['password']}") # TODO: Delete.
 
     scs["username"] = request_dict_username
     scs["password"] = request_dict_password
@@ -225,6 +231,8 @@ def login() -> Response:
         load_user()
     except AnySqlite3Error as err:
         print(err)
+
+    print(f"Login as userid: {acg.user}")
 
     if acg.user is None:
         return jsonify(None)
@@ -243,7 +251,7 @@ def logout() -> Response:
     scs.pop(key="username", default=None)
     scs.pop(key="password", default=None)
 
-    print(f"acg.user: {acg.user}") # TODO: Delete.
+    print(f"Logout as userid: {acg.user}")
 
     if acg.user is None:
         return jsonify(None)
@@ -261,20 +269,18 @@ def addresses() -> Response:
     request_: Request = cast(LP[Request], request)._get_current_object()
     db_con: Connection | None = get_database_connection()
 
+    print(f"/addresses [{request_.method}] as userid: {acg.user}")
+
     request_dict: dict[str, str | None] | None = None
     request_dict_name: str | None = None
     request_dict_email: str | None = None
     request_dict_tel: str | None = None
     if request_.is_json:
         request_dict = request_.get_json(force=False, silent=True, cache=False)
-        print(f"request_dict: {request_dict}") # TODO: Delete.
     if isinstance(request_dict, dict):
         request_dict_name = request_dict.get("name", None)
         request_dict_email = request_dict.get("email", None)
         request_dict_tel = request_dict.get("tel", None)
-        print(f"request_dict['name']: {request_dict['name']}") # TODO: Delete.
-        print(f"request_dict['email']: {request_dict['email']}") # TODO: Delete.
-        print(f"request_dict['tel']: {request_dict['tel']}") # TODO: Delete.
 
     if acg.user is None:
         return jsonify(None)
@@ -340,6 +346,8 @@ def address(addressid: int | None = None) -> Response:
     request_: Request = cast(LP[Request], request)._get_current_object()
     db_con: Connection | None = get_database_connection()
 
+    print(f"/addresses/{addressid} [{request_.method}] as userid: {acg.user}")
+
     if addressid is None:
         return jsonify(None)
 
@@ -349,14 +357,10 @@ def address(addressid: int | None = None) -> Response:
     request_dict_tel: str | None = None
     if request_.is_json:
         request_dict = request_.get_json(force=False, silent=True, cache=False)
-        print(f"request_dict: {request_dict}") # TODO: Delete.
     if isinstance(request_dict, dict):
         request_dict_name = request_dict.get("name", None)
         request_dict_email = request_dict.get("email", None)
         request_dict_tel = request_dict.get("tel", None)
-        print(f"request_dict['name']: {request_dict['name']}") # TODO: Delete.
-        print(f"request_dict['email']: {request_dict['email']}") # TODO: Delete.
-        print(f"request_dict['tel']: {request_dict['tel']}") # TODO: Delete.
 
     if acg.user is None:
         return jsonify(None)

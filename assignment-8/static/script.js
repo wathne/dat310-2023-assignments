@@ -31,7 +31,7 @@ const filterCriteriaElement = document.getElementById("filter-criteria");
 
 /* Session API:
  *   POST /login:
- *     body:     json[dict[str, str | None]]
+ *     body:     json[dict[str, str]]
  *     response: json[int] | json[None]
  *   POST /logout:
  *     body:     Any
@@ -39,7 +39,7 @@ const filterCriteriaElement = document.getElementById("filter-criteria");
  */
 
 
-/* RESTful API:
+/* REST API:
  *   GET    ~> get_user_addresses
  *   POST   ~> insert_address
  *   PUT    ~> update_address
