@@ -26,22 +26,13 @@ RESTful API:
     DELETE /addresses/<addressid>:
         body:     Any
         response: json[int] | json[None]
-
-Obsolete or testing, please ignore:
-- /templates directory
-- app.user_info()           - "/user_info"
-- app.clear_user()          - "/clear_user"
-- app.session_info()        - "/session_info"
-- app.clear_session()       - "/clear_session"
-- app.test()                - "/test"
-- app.login_deprecated()    - "/login_deprecated"
 """
 
 #from flask import current_app # current_app is a LocalProxy.
 from flask import Flask # current_app real type.
 from flask import g # g is a LocalProxy.
 from flask import redirect
-from flask import render_template
+#from flask import render_template
 from flask import request # request is a LocalProxy.
 from flask import session # session is a LocalProxy.
 from flask import url_for
@@ -184,68 +175,6 @@ def before_request() -> None:
     return None
 
 
-# Obsolete or testing, please ignore.
-@app.route(rule="/user_info")
-def user_info() -> tuple[str, int]:
-    # pylint: disable=protected-access
-    scs: SCS = cast(LP[SCS], session)._get_current_object()
-    scs_username: str | None = scs.get(key="username", default=None)
-    scs_password: str | None = scs.get(key="password", default=None)
-    return (render_template(
-        template_name_or_list="user_info.html",
-        username=scs_username,
-        password=scs_password,
-    ), 200)
-
-
-# Obsolete or testing, please ignore.
-@app.route(rule="/clear_user")
-def clear_user() -> WerkzeugResponse | Response:
-    # pylint: disable=protected-access
-    scs: SCS = cast(LP[SCS], session)._get_current_object()
-    scs.pop(key="username", default=None)
-    scs.pop(key="password", default=None)
-    return redirect(
-        location=url_for(
-            endpoint="user_info",
-        ),
-        code=302,
-    )
-
-
-# Obsolete or testing, please ignore.
-@app.route(rule="/session_info")
-def session_info() -> tuple[str, int]:
-    # pylint: disable=protected-access
-    scs: SCS = cast(LP[SCS], session)._get_current_object()
-    return (render_template(
-        template_name_or_list="session_info.html",
-        scs=scs,
-    ), 200)
-
-
-# Obsolete or testing, please ignore.
-@app.route(rule="/clear_session")
-def clear_session() -> WerkzeugResponse | Response:
-    # pylint: disable=protected-access
-    scs: SCS = cast(LP[SCS], session)._get_current_object()
-    scs.clear()
-    return redirect(
-        location=url_for(
-            endpoint="session_info",
-        ),
-        code=302,
-    )
-
-
-# Obsolete or testing, please ignore.
-@app.route(rule="/test")
-def test() -> tuple[str, int]:
-    return (render_template(
-        template_name_or_list="test.html",
-    ), 200)
-
-
 @app.route(rule="/")
 @app.route(rule="/index")
 def index() -> WerkzeugResponse | Response:
@@ -260,52 +189,6 @@ def index() -> WerkzeugResponse | Response:
         ),
         code=302,
     )
-
-
-# Obsolete or testing, please ignore.
-@app.route(
-    rule="/login_deprecated",
-    methods=["GET", "POST"],
-)
-def login_deprecated() -> tuple[str, int]:
-    # pylint: disable=protected-access
-    acg: ACG = cast(LP[ACG], g)._get_current_object()
-    request_: Request = cast(LP[Request], request)._get_current_object()
-    scs: SCS = cast(LP[SCS], session)._get_current_object()
-    db_con: Connection | None = get_database_connection()
-
-    if request_.method == "POST":
-        scs["username"] = request_.form.get(
-            key="username",
-            default=None,
-            type=str,
-        )
-        scs["password"] = request_.form.get(
-            key="password",
-            default=None,
-            type=str,
-        )
-
-        if db_con is None:
-            return ("No database connection.", 500)
-
-        try:
-            load_user()
-        except AnySqlite3Error as err:
-            print(err)
-
-        if acg.user is None:
-            return (render_template(
-                template_name_or_list="form_login_error.html",
-            ), 200)
-
-        return (render_template(
-            template_name_or_list="form_login_success.html",
-        ), 200)
-
-    return (render_template(
-        template_name_or_list="form_login.html",
-    ), 200)
 
 
 @app.route(
